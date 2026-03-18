@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Usuario {
+  id              String   @id @default(uuid())
+  nombre          String
+  email           String   @unique
+  passwordHash    String   @map("password_hash")
+  rol             Rol      @default(estudiante)
+  estado          EstadoUsuario @default(pendiente_aprobacion)
+  fechaRegistro   DateTime @default(now()) @map("fecha_registro")
+  actualizadoEn   DateTime @updatedAt @map("actualizado_en")
+
+  perfilEstudiante PerfilEstudiante?
+  inscripciones    InscripcionSemestre[]
+  eventos         EventoCalendario[]
+  historialAprobaciones HistorialAprobacion[] @relation("usuarioAprobado")
+  aprobacionesRealizadas HistorialAprobacion[] @relation("adminQueAprueba")
+
+  @@map("usuarios")
+}
+
+enum Rol {
+  admin
+  estudiante
+}
+
+enum EstadoUsuario {
+  pendiente_aprobacion
+  aprobado
+  rechazado
+}
+
+model Carrera {
+  id        String   @id @default(uuid())
+  nombre    String
+  codigo    String?
+  activa    Boolean  @default(true)
+  creadoEn  DateTime @default(now()) @map("creado_en")
+
+  pensums   Pensum[]
+  perfiles  PerfilEstudiante[]
+
+  @@map("carreras")
+}
+
+model Pensum {
+  id        String   @id @default(uuid())
+  carreraId String   @map("carrera_id")
+  nombre    String
+  version   String?
+  vigente   Boolean  @default(true)
+  creadoEn  DateTime @default(now()) @map("creado_en")
+
+  carrera   Carrera  @relation(fields: [carreraId], references: [id], onDelete: Cascade)
+  materias  Materia[]
+  perfiles  PerfilEstudiante[]
+
+  @@map("pensums")
+}
+
+model Materia {
+  id              String   @id @default(uuid())
+  pensumId        String   @map("pensum_id")
+  nombre          String
+  codigo          String?
+  semestreNumero  Int      @map("semestre_numero")
+  creditos        Int?
+  orden           Int?
+
+  pensum          Pensum   @relation(fields: [pensumId], references: [id], onDelete: Cascade)
+  prerrequisitosDe Prerrequisito[] @relation("materiaQueRequiere")
+  esPrerrequisitoDe Prerrequisito[] @relation("materiaPrerrequisito")
+  inscripciones   InscripcionSemestre[]
+
+  @@map("materias")
+}
+
+model Prerrequisito {
+  id                    String   @id @default(uuid())
+  materiaId             String   @map("materia_id")
+  materiaPrerrequisitoId String   @map("materia_prerrequisito_id")
+
+  materia               Materia   @relation("materiaQueRequiere", fields: [materiaId], references: [id], onDelete: Cascade)
+  materiaPrerrequisito  Materia   @relation("materiaPrerrequisito", fields: [materiaPrerrequisitoId], references: [id], onDelete: Cascade)
+
+  @@unique([materiaId, materiaPrerrequisitoId])
+  @@map("prerrequisitos")
+}
+
+model PerfilEstudiante {
+  id             String        @id @default(uuid())
+  usuarioId      String        @unique @map("usuario_id")
+  carreraId      String        @map("carrera_id")
+  pensumId       String        @map("pensum_id")
+  tipoIngreso    TipoIngreso   @map("tipo_ingreso")
+  semestreActual String        @map("semestre_actual")
+
+  usuario        Usuario       @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  carrera        Carrera       @relation(fields: [carreraId], references: [id])
+  pensum         Pensum        @relation(fields: [pensumId], references: [id])
+
+  @@map("perfiles_estudiante")
+}
+
+enum TipoIngreso {
+  primer_semestre
+  avanzado
+}
+
+model InscripcionSemestre {
+  id               String     @id @default(uuid())
+  usuarioId        String     @map("usuario_id")
+  materiaId        String     @map("materia_id")
+  semestreEtiqueta String     @map("semestre_etiqueta")
+  estado           EstadoInscripcion @default(en_curso)
+  notaDefinitiva   Decimal?   @map("nota_definitiva") @db.Decimal(4, 2)
+  promedioSemestre Decimal?   @map("promedio_semestre") @db.Decimal(4, 2)
+
+  usuario          Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  materia          Materia    @relation(fields: [materiaId], references: [id], onDelete: Cascade)
+  planesEvaluacion PlanEvaluacion[]
+  eventos          EventoCalendario[]
+
+  @@unique([usuarioId, materiaId, semestreEtiqueta])
+  @@map("inscripciones_semestre")
+}
+
+enum EstadoInscripcion {
+  en_curso
+  aprobada
+  reprobada
+}
+
+model PlanEvaluacion {
+  id                    String    @id @default(uuid())
+  inscripcionSemestreId String    @map("inscripcion_semestre_id")
+  nombre                String
+  porcentaje            Decimal   @db.Decimal(5, 2)
+  orden                 Int       @default(0)
+
+  inscripcionSemestre   InscripcionSemestre @relation(fields: [inscripcionSemestreId], references: [id], onDelete: Cascade)
+  evaluaciones         Evaluacion[]
+
+  @@map("planes_evaluacion")
+}
+
+model Evaluacion {
+  id                 String    @id @default(uuid())
+  planEvaluacionId   String    @map("plan_evaluacion_id")
+  fechaLimite        DateTime? @map("fecha_limite") @db.Date
+  observacion        String?   @db.Text
+  notaEsperada       Decimal?  @map("nota_esperada") @db.Decimal(4, 2)
+  notaReal           Decimal?  @map("nota_real") @db.Decimal(4, 2)
+  archivos           Json?     // Array de URLs o paths
+  creadoEn           DateTime @default(now()) @map("creado_en")
+
+  planEvaluacion     PlanEvaluacion @relation(fields: [planEvaluacionId], references: [id], onDelete: Cascade)
+  eventos            EventoCalendario[]
+
+  @@map("evaluaciones")
+}
+
+model EventoCalendario {
+  id                    String    @id @default(uuid())
+  usuarioId              String    @map("usuario_id")
+  titulo                 String
+  tipo                   TipoEvento
+  fecha                  DateTime  @db.Date
+  descripcion            String?   @db.Text
+  evaluacionId           String?   @map("evaluacion_id")
+  inscripcionSemestreId  String?   @map("inscripcion_semestre_id")
+
+  usuario                Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  evaluacion             Evaluacion? @relation(fields: [evaluacionId], references: [id])
+  inscripcionSemestre    InscripcionSemestre? @relation(fields: [inscripcionSemestreId], references: [id])
+
+  @@map("eventos_calendario")
+}
+
+enum TipoEvento {
+  tarea
+  examen
+  evaluacion
+}
+
+model HistorialAprobacion {
+  id        String   @id @default(uuid())
+  usuarioId String   @map("usuario_id")
+  adminId   String   @map("admin_id")
+  accion    AccionAprobacion
+  creadoEn  DateTime @default(now()) @map("creado_en")
+
+  usuario   Usuario  @relation("usuarioAprobado", fields: [usuarioId], references: [id], onDelete: Cascade)
+  admin     Usuario  @relation("adminQueAprueba", fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@map("historial_aprobacion")
+}
+
+enum AccionAprobacion {
+  aprobado
+  rechazado
+}

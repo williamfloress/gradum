@@ -1,0 +1,15 @@
+[32m[Nest] 14684  - [39m21/03/2026, 10:47:52 a.┬ám. [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[PrismaService] Initializing with forced library engine...
+DATABASE_URL starts with: postgresql
+[Nest] 14684  - 21/03/2026, 10:47:52 a.┬ám.   ERROR [ExceptionHandler] PrismaClientConstructorValidationError: Using engine type "client" requires either "adapter" or "accelerateUrl" to be provided to PrismaClient constructor.
+Read more at https://pris.ly/d/client-constructor
+    at validateDependentOptions (C:\Users\Jeisi Rosales\Documents\gradum\backend\node_modules\@prisma\client\src\runtime\utils\validatePrismaClientOptions.ts:229:11)
+    at validatePrismaClientOptions (C:\Users\Jeisi Rosales\Documents\gradum\backend\node_modules\@prisma\client\src\runtime\utils\validatePrismaClientOptions.ts:246:3)
+    at new t (C:\Users\Jeisi Rosales\Documents\gradum\backend\node_modules\@prisma\client\src\runtime\getPrismaClient.ts:342:7)
+    at new PrismaService (C:\Users\Jeisi Rosales\Documents\gradum\backend\src\prisma\prisma.service.ts:21:19)
+    at Injector.instantiateClass (C:\Users\Jeisi Rosales\Documents\gradum\backend\node_modules\@nestjs\core\injector\injector.js:422:19)
+    at callback (C:\Users\Jeisi Rosales\Documents\gradum\backend\node_modules\@nestjs\core\injector\injector.js:70:45)
+    at async Injector.resolveConstructorParams (C:\Users\Jeisi Rosales\Documents\gradum\backend\node_modules\@nestjs\core\injector\injector.js:170:24)
+    at async Injector.loadInstance (C:\Users\Jeisi Rosales\Documents\gradum\backend\node_modules\@nestjs\core\injector\injector.js:75:13)
+    at async Injector.loadProvider (C:\Users\Jeisi Rosales\Documents\gradum\backend\node_modules\@nestjs\core\injector\injector.js:103:9)
+    at async C:\Users\Jeisi Rosales\Documents\gradum\backend\node_modules\@nestjs\core\injector\instance-loader.js:56:13

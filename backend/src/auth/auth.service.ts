@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -64,6 +65,9 @@ export class AuthService {
       throw new UnauthorizedException('Email inválido');
     }
 
+    if (user.estado === 'baneado') {
+      throw new UnauthorizedException('Tu cuenta ha sido suspendida');
+    }
     if (user.estado !== 'aprobado') {
       throw new UnauthorizedException('Usuario no aprobado');
     }
@@ -86,6 +90,24 @@ export class AuthService {
         rol: user.rol,
       },
       accessToken: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async getMe(userId: string) {
+    const user = await this.prisma.usuario.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      nombre: user.nombre,
+      rol: user.rol,
+      estado: user.estado,
     };
   }
 }

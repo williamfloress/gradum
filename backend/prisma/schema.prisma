@@ -35,6 +35,7 @@ enum EstadoUsuario {
   pendiente_aprobacion
   aprobado
   rechazado
+  baneado
 }
 
 model Carrera {
@@ -206,4 +207,5 @@ model HistorialAprobacion {
 enum AccionAprobacion {
   aprobado
   rechazado
+  baneado
 }

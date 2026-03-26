@@ -32,6 +32,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('Usuario no encontrado o token inválido');
     }
 
+    if (user.estado !== 'aprobado') {
+      throw new UnauthorizedException('Cuenta no activa o sesión revocada');
+    }
+
     // Retornamos los datos básicos que queremos tener disponibles en los controladores protegidos
     return { userId: payload.sub, email: payload.email, rol: payload.rol };
   }

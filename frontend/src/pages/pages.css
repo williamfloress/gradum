@@ -1,0 +1,521 @@
+/* Páginas GRADUM — layout alineado con mockups (hero, auth, dashboard) */
+
+.gradum-page {
+  min-height: 100svh;
+  box-sizing: border-box;
+}
+
+.gradum-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gradum-muted);
+}
+
+/* ——— Landing ——— */
+.gradum-landing {
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, var(--gradum-glow), transparent),
+    var(--gradum-bg);
+}
+
+.gradum-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--gradum-border);
+  max-width: 72rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.gradum-logo {
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.08em;
+  color: var(--gradum-primary);
+}
+
+.gradum-logo--link {
+  text-decoration: none;
+}
+
+.gradum-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.gradum-link {
+  color: var(--gradum-text);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.gradum-link:hover {
+  color: var(--gradum-primary);
+}
+
+.gradum-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+  text-align: center;
+}
+
+.gradum-eyebrow {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gradum-primary);
+  margin: 0 0 0.75rem;
+}
+
+.gradum-hero h1 {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 1rem;
+  color: var(--gradum-heading);
+}
+
+.gradum-lead {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--gradum-muted);
+  margin: 0 0 2rem;
+}
+
+.gradum-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.gradum-footer {
+  padding: 1.25rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--gradum-muted);
+  border-top: 1px solid var(--gradum-border);
+}
+
+/* ——— Botones ——— */
+.gradum-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.gradum-btn--sm {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.875rem;
+}
+
+.gradum-btn--primary {
+  background: var(--gradum-primary);
+  color: #fff;
+}
+
+.gradum-btn--primary:hover {
+  background: var(--gradum-primary-hover);
+}
+
+.gradum-btn--primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.gradum-btn--secondary {
+  background: var(--gradum-surface-elevated);
+  color: var(--gradum-heading);
+  border-color: var(--gradum-border);
+}
+
+.gradum-btn--secondary:hover {
+  border-color: var(--gradum-primary);
+  color: var(--gradum-primary);
+}
+
+.gradum-btn--outline {
+  background: transparent;
+  color: var(--gradum-heading);
+  border-color: var(--gradum-border);
+}
+
+.gradum-btn--outline:hover {
+  border-color: var(--gradum-primary);
+  color: var(--gradum-primary);
+}
+
+.gradum-btn--block {
+  width: 100%;
+}
+
+/* ——— Auth (login / register) ——— */
+.gradum-auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: var(--gradum-bg);
+}
+
+.gradum-auth-card {
+  width: 100%;
+  max-width: 26rem;
+  padding: 2rem;
+  background: var(--gradum-surface);
+  border: 1px solid var(--gradum-border);
+  border-radius: 1rem;
+  box-shadow: var(--gradum-card-shadow);
+  text-align: left;
+}
+
+.gradum-auth-card h1 {
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem;
+  color: var(--gradum-heading);
+}
+
+.gradum-auth-sub {
+  margin: 0 0 1.5rem;
+  font-size: 0.9375rem;
+  color: var(--gradum-muted);
+  line-height: 1.45;
+}
+
+.gradum-back {
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--gradum-muted);
+  text-decoration: none;
+}
+
+.gradum-back:hover {
+  color: var(--gradum-primary);
+}
+
+.gradum-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gradum-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.gradum-field span {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--gradum-heading);
+}
+
+.gradum-field input {
+  padding: 0.65rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--gradum-border);
+  border-radius: 0.5rem;
+  background: var(--gradum-input-bg);
+  color: var(--gradum-heading);
+  font-family: inherit;
+}
+
+.gradum-field input::placeholder {
+  color: var(--gradum-muted);
+  opacity: 0.85;
+}
+
+.gradum-field input:focus {
+  outline: 2px solid var(--gradum-primary-soft);
+  outline-offset: 0;
+  border-color: var(--gradum-primary);
+}
+
+.gradum-error {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--gradum-danger);
+}
+
+.gradum-success {
+  margin: 0 0 1rem;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--gradum-success-text);
+  background: var(--gradum-success-bg);
+  border: 1px solid var(--gradum-success-border);
+  border-radius: 0.5rem;
+}
+
+.gradum-auth-footer {
+  margin: 1.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--gradum-muted);
+  text-align: center;
+}
+
+.gradum-link-inline {
+  color: var(--gradum-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.gradum-link-inline:hover {
+  text-decoration: underline;
+}
+
+/* ——— Dashboard ——— */
+.gradum-dashboard {
+  background: var(--gradum-bg);
+}
+
+.gradum-dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--gradum-border);
+  max-width: 56rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.gradum-dash-main {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+  text-align: left;
+}
+
+.gradum-dash-main h1 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  margin: 0 0 0.75rem;
+  color: var(--gradum-heading);
+}
+
+.gradum-dash-card {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--gradum-surface);
+  border: 1px solid var(--gradum-border);
+  border-radius: 0.75rem;
+  box-shadow: var(--gradum-card-shadow);
+}
+
+.gradum-dash-card h2 {
+  font-size: 1.1rem;
+  margin: 0 0 1rem;
+  color: var(--gradum-heading);
+}
+
+.gradum-dl {
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.gradum-dl div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.gradum-dl dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gradum-muted);
+}
+
+.gradum-dl dd {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--gradum-heading);
+}
+
+.gradum-dash-header--wide {
+  max-width: 90rem;
+}
+
+.gradum-dash-main--wide {
+  max-width: 90rem;
+}
+
+.gradum-dash-header__left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.gradum-dash-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+}
+
+.gradum-dash-nav__current {
+  color: var(--gradum-muted);
+  font-weight: 500;
+}
+
+.gradum-dash-card--compact {
+  margin-top: 1.25rem;
+}
+
+.gradum-dash-card__lead {
+  margin: 0 0 1rem;
+}
+
+.gradum-muted-text {
+  color: var(--gradum-muted);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.gradum-error--block {
+  margin-bottom: 1rem;
+}
+
+.gradum-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.gradum-btn--danger {
+  background: rgba(248, 113, 113, 0.12);
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.45);
+}
+
+.gradum-btn--danger:hover:not(:disabled) {
+  background: rgba(248, 113, 113, 0.25);
+  border-color: #f87171;
+  color: #fff;
+}
+
+.gradum-admin-table-wrap {
+  margin-top: 1.5rem;
+}
+
+.gradum-table-scroll {
+  overflow-x: auto;
+  margin: 0 -0.25rem;
+  padding: 0 0.25rem;
+}
+
+.gradum-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.gradum-table th,
+.gradum-table td {
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--gradum-border);
+  vertical-align: top;
+}
+
+.gradum-table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gradum-muted);
+  font-weight: 600;
+}
+
+.gradum-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.gradum-badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.gradum-badge--pendiente_aprobacion {
+  background: rgba(251, 191, 36, 0.12);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+.gradum-badge--aprobado {
+  background: rgba(20, 184, 166, 0.12);
+  color: var(--gradum-success-text);
+  border: 1px solid var(--gradum-success-border);
+}
+
+.gradum-badge--rechazado {
+  background: rgba(148, 163, 184, 0.1);
+  color: var(--gradum-muted);
+  border: 1px solid var(--gradum-border);
+}
+
+.gradum-badge--baneado {
+  background: rgba(248, 113, 113, 0.12);
+  color: #fecaca;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+}
+
+.gradum-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.gradum-admin-actions__na {
+  font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  .gradum-header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .gradum-nav {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

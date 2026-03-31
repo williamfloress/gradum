@@ -5,50 +5,51 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService,
+    private readonly supabaseService: SupabaseService,
   ) { }
 
   async register(registerDto: RegisterDto) {
     const { email, nombre, password } = registerDto;
 
-    // Verificar formato de correo electrónico
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      throw new BadRequestException('Formato de correo electrónico inválido');
-    }
-
-    // Verificar si el usuario ya existe
-    const existingUser = await this.prisma.usuario.findUnique({
-      where: { email },
-    });
-
-    if (existingUser) {
-      throw new ConflictException('El correo ya está registrado');
-    }
-
-    // Hashear la contraseña
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    // Crear el usuario
-    const user = await this.prisma.usuario.create({
-      data: {
-        email,
-        nombre,
-        passwordHash,
+    // Supabase maneja el registro y el hashing de la contraseña
+    const { data, error } = await this.supabaseService.client.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          nombre,
+        },
       },
     });
 
-    // Retornar usuario sin la contraseña
+    if (error || !data.user) {
+      if (error?.status === 400 && error?.message.includes('already registered')) {
+        throw new ConflictException('El correo ya está registrado en Supabase');
+      }
+      throw new BadRequestException(error?.message || 'Error al registrar en Supabase');
+    }
+
+    // Sincronizar con la tabla usuario de Prisma
+    const user = await this.prisma.usuario.upsert({
+      where: { email },
+      update: { nombre },
+      create: {
+        id: data.user.id, // Usamos el UUID de Supabase
+        email,
+        nombre,
+        passwordHash: ''
+      },
+    });
+
     const { passwordHash: _, ...result } = user;
     return result;
   }
@@ -56,31 +57,32 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
-    // Buscar el usuario
+    // Autenticar con Supabase
+    const { data, error } = await this.supabaseService.client.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error || !data.session) {
+      throw new UnauthorizedException('Credenciales inválidas: ' + (error?.message || 'Error de sesión'));
+    }
+
+    // Verificar en nuestra DB el estado del usuario
     const user = await this.prisma.usuario.findUnique({
       where: { email },
     });
 
     if (!user) {
-      throw new UnauthorizedException('Email inválido');
+      throw new UnauthorizedException('Usuario no encontrado en la base de datos local');
     }
 
     if (user.estado === 'baneado') {
       throw new UnauthorizedException('Tu cuenta ha sido suspendida');
     }
+
     if (user.estado !== 'aprobado') {
       throw new UnauthorizedException('Usuario no aprobado');
     }
-
-    // Comparar contraseña
-    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Contraseña inválida');
-    }
-
-    // Generar JWT
-    const payload = { sub: user.id, email: user.email, rol: user.rol };
 
     return {
       user: {
@@ -89,7 +91,8 @@ export class AuthService {
         nombre: user.nombre,
         rol: user.rol,
       },
-      accessToken: await this.jwtService.signAsync(payload),
+      accessToken: data.session.access_token,
+      refreshToken: data.session.refresh_token,
     };
   }
 
@@ -108,6 +111,21 @@ export class AuthService {
       nombre: user.nombre,
       rol: user.rol,
       estado: user.estado,
+    };
+  }
+
+  async refreshSession(refreshToken: string) {
+    const { data, error } = await this.supabaseService.client.auth.refreshSession({
+      refresh_token: refreshToken,
+    });
+
+    if (error || !data.session) {
+      throw new UnauthorizedException('Sesión expirada, iniciá sesión nuevamente');
+    }
+
+    return {
+      accessToken: data.session.access_token,
+      refreshToken: data.session.refresh_token,
     };
   }
 }

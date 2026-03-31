@@ -41,7 +41,7 @@ enum EstadoUsuario {
 model Carrera {
   id        String   @id @default(uuid())
   nombre    String
-  codigo    String?
+  codigo    String
   activa    Boolean  @default(true)
   creadoEn  DateTime @default(now()) @map("creado_en")
 

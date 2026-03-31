@@ -47,4 +47,11 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   get usuario(): any {
     return this.prisma.usuario;
   }
+
+  /**
+   * Acceso directo al modelo carrera (referenciado como degree en el código)
+   */
+  get degree(): any {
+    return this.prisma.carrera;
+  }
 }

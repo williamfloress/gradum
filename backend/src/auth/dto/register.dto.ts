@@ -1,11 +1,13 @@
+import { IsEmail, IsString } from 'class-validator';
+
 export class RegisterDto {
+  @IsString()
   nombre: string;
+
+  @IsEmail()
   email: string;
 
-  /**
-   * El cliente envía la contraseña en texto plano.
-   * El servidor se encarga de cifrarla (hashing) antes de guardarla.
-   */
+  @IsString()
   password: string;
 
   // NOTA: Los campos 'rol', 'estado', 'fechaRegistro' y 'actualizadoEn'

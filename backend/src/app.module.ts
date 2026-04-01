@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { AdminModule } from './admin/admin.module';
 import { DegreeModule } from './degree/degree.module';
+import { PensumModule } from './pensum/pensum.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { DegreeModule } from './degree/degree.module';
     AuthModule,
     AdminModule,
     DegreeModule,
+    PensumModule,
   ],
   controllers: [AppController],
   providers: [AppService],

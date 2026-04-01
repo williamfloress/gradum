@@ -54,4 +54,11 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   get degree(): any {
     return this.prisma.carrera;
   }
+
+  /**
+   * Acceso directo al modelo pensum
+   */
+  get pensum(): any {
+    return this.prisma.pensum;
+  }
 }

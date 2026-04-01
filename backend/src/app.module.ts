@@ -6,6 +6,8 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { AdminModule } from './admin/admin.module';
 import { SupabaseModule } from './supabase/supabase.module';
+import { DegreeModule } from './degree/degree.module';
+import { PensumModule } from './pensum/pensum.module';
 
 @Module({
   imports: [
@@ -14,8 +16,10 @@ import { SupabaseModule } from './supabase/supabase.module';
     AuthModule,
     AdminModule,
     SupabaseModule,
+    DegreeModule,
+    PensumModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

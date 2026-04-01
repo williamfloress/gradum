@@ -1,15 +1,15 @@
 import { Body, Controller, Get, Param, Patch, Req, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
 import { RolesGuard, type JwtRequestUser } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { AdminService } from './admin.service';
 import { parseAdminUserAction } from './dto/admin-user-action.dto';
 
 @Controller('admin')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(SupabaseAuthGuard, RolesGuard)
 @Roles('admin')
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly adminService: AdminService) { }
 
   @Get('ping')
   ping() {

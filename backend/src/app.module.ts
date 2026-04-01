@@ -5,6 +5,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { AdminModule } from './admin/admin.module';
+import { SupabaseModule } from './supabase/supabase.module';
 import { DegreeModule } from './degree/degree.module';
 import { PensumModule } from './pensum/pensum.module';
 
@@ -14,10 +15,11 @@ import { PensumModule } from './pensum/pensum.module';
     PrismaModule,
     AuthModule,
     AdminModule,
+    SupabaseModule,
     DegreeModule,
     PensumModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

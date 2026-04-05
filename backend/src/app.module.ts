@@ -9,6 +9,7 @@ import { SupabaseModule } from './supabase/supabase.module';
 import { DegreeModule } from './degree/degree.module';
 import { PensumModule } from './pensum/pensum.module';
 import { MateriaModule } from './materia/materia.module';
+import { PrerrequisitosModule } from './prerrequisitos/prerrequisitos.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { MateriaModule } from './materia/materia.module';
     DegreeModule,
     PensumModule,
     MateriaModule,
+    PrerrequisitosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -68,4 +68,11 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   get materia(): any {
     return this.prisma.materia;
   }
+
+  /**
+   * Acceso directo al modelo prerrequisito
+   */
+  get prerrequisito(): any {
+    return this.prisma.prerrequisito;
+  }
 }

@@ -8,6 +8,8 @@ import { AdminModule } from './admin/admin.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { DegreeModule } from './degree/degree.module';
 import { PensumModule } from './pensum/pensum.module';
+import { MateriaModule } from './materia/materia.module';
+import { PrerrequisitosModule } from './prerrequisitos/prerrequisitos.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { PensumModule } from './pensum/pensum.module';
     SupabaseModule,
     DegreeModule,
     PensumModule,
+    MateriaModule,
+    PrerrequisitosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

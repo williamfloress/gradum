@@ -17,7 +17,7 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
 
     // Configuración del pool de conexiones de 'pg'
     const pool = new Pool({ connectionString });
-    
+
     // Adaptador de Prisma para PostgreSQL (Driver JavaScript)
     const adapter = new PrismaPg(pool as any);
 
@@ -60,5 +60,19 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
    */
   get pensum(): any {
     return this.prisma.pensum;
+  }
+
+  /**
+   * Acceso directo al modelo materia
+   */
+  get materia(): any {
+    return this.prisma.materia;
+  }
+
+  /**
+   * Acceso directo al modelo prerrequisito
+   */
+  get prerrequisito(): any {
+    return this.prisma.prerrequisito;
   }
 }

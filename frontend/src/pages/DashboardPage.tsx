@@ -41,9 +41,14 @@ export function DashboardPage() {
             <p className="gradum-muted-text gradum-dash-card__lead">
               Gestioná las cuentas registradas: aprobá solicitudes, denegá registros o suspendé cuentas activas.
             </p>
-            <Link to="/admin/usuarios" className="gradum-btn gradum-btn--secondary gradum-btn--sm">
-              Gestión de usuarios
-            </Link>
+            <div className="gradum-admin-actions">
+              <Link to="/admin/usuarios" className="gradum-btn gradum-btn--secondary gradum-btn--sm">
+                Gestión de usuarios
+              </Link>
+              <Link to="/admin/carreras" className="gradum-btn gradum-btn--secondary gradum-btn--sm">
+                Carreras y pensums
+              </Link>
+            </div>
           </section>
         )}
 

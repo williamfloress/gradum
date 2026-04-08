@@ -7,6 +7,9 @@ import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { AdminUsersPage } from './pages/AdminUsersPage';
 import { AdminRoute } from './components/AdminRoute';
+import { AdminDegreesPage } from './pages/AdminDegreesPage';
+import { AdminDegreePensumsPage } from './pages/AdminDegreePensumsPage';
+import { AdminPensumMateriasPage } from './pages/AdminPensumMateriasPage';
 import './App.css';
 
 function App() {
@@ -31,6 +34,36 @@ function App() {
               <ProtectedRoute>
                 <AdminRoute>
                   <AdminUsersPage />
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/carreras"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <AdminDegreesPage />
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/carreras/:id/pensums"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <AdminDegreePensumsPage />
+                </AdminRoute>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/pensums/:id/materias"
+            element={
+              <ProtectedRoute>
+                <AdminRoute>
+                  <AdminPensumMateriasPage />
                 </AdminRoute>
               </ProtectedRoute>
             }

@@ -508,6 +508,81 @@
   font-size: 0.875rem;
 }
 
+.gradum-inline-input {
+  width: 100%;
+  min-width: 10rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--gradum-border);
+  border-radius: 0.5rem;
+  background: var(--gradum-input-bg);
+  color: var(--gradum-heading);
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
+.gradum-inline-input--num {
+  min-width: 4.5rem;
+}
+
+.gradum-inline-input:focus {
+  outline: 2px solid var(--gradum-primary-soft);
+  outline-offset: 0;
+  border-color: var(--gradum-primary);
+}
+
+.gradum-inline-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gradum-prerreq-panel {
+  padding: 1rem;
+  border: 1px solid var(--gradum-border);
+  border-radius: 0.75rem;
+  background: var(--gradum-surface-elevated);
+}
+
+.gradum-prerreq-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: var(--gradum-heading);
+}
+
+.gradum-prerreq-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.gradum-select {
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--gradum-border);
+  border-radius: 0.5rem;
+  background: var(--gradum-input-bg);
+  color: var(--gradum-heading);
+  font-family: inherit;
+  font-size: 0.875rem;
+  min-width: min(32rem, 100%);
+}
+
+.gradum-prerreq-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.gradum-prerreq-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
 @media (max-width: 640px) {
   .gradum-header {
     flex-wrap: wrap;

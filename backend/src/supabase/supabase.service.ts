@@ -5,7 +5,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 @Injectable()
 export class SupabaseService implements OnModuleInit {
   private readonly logger = new Logger(SupabaseService.name);
-  private clientInstance: SupabaseClient;
+  private clientInstance?: SupabaseClient;
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -14,8 +14,11 @@ export class SupabaseService implements OnModuleInit {
     const supabaseKey = this.configService.get<string>('SUPABASE_ANON_KEY');
 
     if (!supabaseUrl || !supabaseKey) {
-      this.logger.error('SUPABASE_URL o SUPABASE_ANON_KEY no están configurados en el archivo .env');
-      return;
+      const msg =
+        'Falta configurar SUPABASE_URL y/o SUPABASE_ANON_KEY. ' +
+        'Sin estas variables no es posible autenticar solicitudes (login/guards).';
+      this.logger.error(msg);
+      throw new Error(msg);
     }
 
     this.clientInstance = createClient(supabaseUrl, supabaseKey);
@@ -23,6 +26,11 @@ export class SupabaseService implements OnModuleInit {
   }
 
   get client() {
+    if (!this.clientInstance) {
+      throw new Error(
+        'Supabase no está configurado (cliente no inicializado). Verifica SUPABASE_URL y SUPABASE_ANON_KEY.',
+      );
+    }
     return this.clientInstance;
   }
 }

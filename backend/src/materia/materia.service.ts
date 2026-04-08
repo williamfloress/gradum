@@ -49,16 +49,11 @@ export class MateriaService {
       throw new NotFoundException(`Pensum con ID ${pensumId} no encontrado`);
     }
 
-    // No hay materias registradas
     const materias = await this.prisma.materia.findMany({
       where: {
         pensumId,
       },
     });
-
-    if (materias.length === 0) {
-      throw new NotFoundException(`No hay materias registradas para el pensum con ID ${pensumId}`);
-    }
 
     return materias;
   }

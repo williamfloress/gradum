@@ -45,7 +45,8 @@ export function LoginPage() {
         <p className="gradum-auth-sub">Accede con tu correo institucional o personal.</p>
         {justRegistered && (
           <p className="gradum-success" role="status">
-            Registro exitoso. Inicia sesión cuando tu cuenta esté aprobada.
+            Registro exitoso. Podés iniciar sesión para ver el estado de tu solicitud mientras un administrador la
+            revisa.
           </p>
         )}
 

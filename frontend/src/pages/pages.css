@@ -182,6 +182,17 @@
   background: var(--gradum-bg);
 }
 
+.gradum-auth-card--wide {
+  max-width: 32rem;
+}
+
+.gradum-pending-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
 .gradum-auth-card {
   width: 100%;
   max-width: 26rem;
@@ -427,6 +438,37 @@
   background: rgba(248, 113, 113, 0.25);
   border-color: #f87171;
   color: #fff;
+}
+
+.gradum-filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.gradum-filter-tab {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--gradum-border);
+  background: transparent;
+  color: var(--gradum-text);
+  font-size: 0.875rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.gradum-filter-tab:hover {
+  border-color: var(--gradum-primary);
+  color: var(--gradum-heading);
+}
+
+.gradum-filter-tab--active {
+  border-color: var(--gradum-primary);
+  background: rgba(20, 184, 166, 0.12);
+  color: var(--gradum-primary);
+  font-weight: 600;
 }
 
 .gradum-admin-table-wrap {

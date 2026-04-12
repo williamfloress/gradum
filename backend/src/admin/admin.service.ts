@@ -38,6 +38,23 @@ export class AdminService {
     return rows;
   }
 
+  async listPendingUsers(): Promise<AdminUserListItem[]> {
+    const rows = await this.prisma.usuario.findMany({
+      where: { estado: 'pendiente_aprobacion' },
+      orderBy: { fechaRegistro: 'asc' },
+      select: {
+        id: true,
+        nombre: true,
+        email: true,
+        rol: true,
+        estado: true,
+        fechaRegistro: true,
+        actualizadoEn: true,
+      },
+    });
+    return rows;
+  }
+
   async applyUserAction(
     adminId: string,
     targetUserId: string,

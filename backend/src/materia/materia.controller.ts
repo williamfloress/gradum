@@ -13,11 +13,12 @@ import { CreateMateriaDto } from './dto/create-materia.dto';
 import { UpdateMateriaDto } from './dto/update-materia.dto';
 import { Roles } from '../auth/roles.decorator';
 import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
+import { ApprovedUserGuard } from '../auth/approved-user.guard';
 import { RolesGuard } from '../auth/roles.guard';
 
 @Controller('pensum/:pensumId/materia')
 @Roles('admin')
-@UseGuards(SupabaseAuthGuard, RolesGuard)
+@UseGuards(SupabaseAuthGuard, ApprovedUserGuard, RolesGuard)
 export class MateriaController {
   constructor(private readonly materiaService: MateriaService) { }
 

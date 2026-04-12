@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
+import { ApprovedUserGuard } from '../auth/approved-user.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { DegreeService } from './degree.service';
@@ -7,7 +8,7 @@ import { CreateDegreeDto } from './dto/create-degree.dto';
 import { UpdateDegreeDto } from './dto/update-degree.dto';
 
 @Controller('degree')
-@UseGuards(SupabaseAuthGuard, RolesGuard)
+@UseGuards(SupabaseAuthGuard, ApprovedUserGuard, RolesGuard)
 export class DegreeController {
   constructor(private readonly degreeService: DegreeService) {}
 

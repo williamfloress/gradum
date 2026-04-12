@@ -10,6 +10,9 @@ import { AdminRoute } from './components/AdminRoute';
 import { AdminDegreesPage } from './pages/AdminDegreesPage';
 import { AdminDegreePensumsPage } from './pages/AdminDegreePensumsPage';
 import { AdminPensumMateriasPage } from './pages/AdminPensumMateriasPage';
+import { ApprovedAccountGate } from './components/ApprovedAccountGate';
+import { PendingApprovalPage } from './pages/PendingApprovalPage';
+import { CuentaDenegadaPage } from './pages/CuentaDenegadaPage';
 import './App.css';
 
 function App() {
@@ -24,7 +27,25 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <DashboardPage />
+                <ApprovedAccountGate>
+                  <DashboardPage />
+                </ApprovedAccountGate>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/pendiente-aprobacion"
+            element={
+              <ProtectedRoute>
+                <PendingApprovalPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cuenta-denegada"
+            element={
+              <ProtectedRoute>
+                <CuentaDenegadaPage />
               </ProtectedRoute>
             }
           />

@@ -1,3 +1,4 @@
+/** Sprint 3 — ApprovedUserGuard añadido a la cadena de guards. */
 import { Controller, Get, Post, Body, Param, Delete, Patch, UseGuards } from '@nestjs/common';
 import { Roles } from '../auth/roles.decorator';
 import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';

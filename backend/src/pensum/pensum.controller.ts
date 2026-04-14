@@ -1,3 +1,4 @@
+/** Sprint 3 — ApprovedUserGuard: solo estudiantes aprobados (y admin) usan el API académico. */
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
 import { ApprovedUserGuard } from '../auth/approved-user.guard';

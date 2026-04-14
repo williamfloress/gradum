@@ -1,3 +1,4 @@
+/** Sprint 3 — ApprovedUserGuard añadido a la cadena de guards. */
 import {
   Controller,
   Get,

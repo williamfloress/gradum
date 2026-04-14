@@ -1,3 +1,7 @@
+/**
+ * Sprint 3 — Ajuste: ya no exige `estado === aprobado` aquí; se inyecta `estado` en `request.user`
+ * para ApprovedUserGuard y para GET /auth/me con cuentas pendientes o denegadas.
+ */
 import {
   CanActivate,
   ExecutionContext,

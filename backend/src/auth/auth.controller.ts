@@ -1,3 +1,7 @@
+/**
+ * Sprint 3 — GET /auth/me solo usa SupabaseAuthGuard (sin ApprovedUserGuard) para refrescar perfil
+ * cuando el estudiante está pendiente o denegado.
+ */
 import { Body, Controller, Get, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';

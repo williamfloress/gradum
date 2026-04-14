@@ -1,11 +1,11 @@
+/**
+ * Sprint 3 — Pantalla para `rechazado` con sesión; sin acceso al resto de API (ApprovedUserGuard en backend).
+ */
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import './pages.css';
 
-/**
- * Sesión de solo lectura informativa: el estudiante puede iniciar sesión pero no usar el panel.
- */
 export function CuentaDenegadaPage() {
   const { user, token, loading, logout, refreshUser } = useAuth();
   const navigate = useNavigate();

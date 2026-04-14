@@ -1,3 +1,7 @@
+/**
+ * Sprint 3 — Nuevo guard: recursos de negocio solo para cuenta `aprobado`.
+ * (Pendiente/denegado tienen JWT válido vía SupabaseAuthGuard pero no pasan aquí.)
+ */
 import {
   CanActivate,
   ExecutionContext,

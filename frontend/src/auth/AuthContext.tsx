@@ -1,3 +1,6 @@
+/**
+ * Sprint 3 — SessionUser.estado viene de /auth/login y /auth/me para gates y pantallas pendiente/denegado.
+ */
 import {
   createContext,
   useCallback,

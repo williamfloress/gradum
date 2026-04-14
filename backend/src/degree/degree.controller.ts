@@ -1,3 +1,4 @@
+/** Sprint 3 — Cadena SupabaseAuthGuard + ApprovedUserGuard + RolesGuard. */
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
 import { ApprovedUserGuard } from '../auth/approved-user.guard';

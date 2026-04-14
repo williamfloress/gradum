@@ -1,3 +1,6 @@
+/**
+ * Sprint 3 — Rutas /pendiente-aprobacion, /cuenta-denegada; dashboard envuelto en ApprovedAccountGate.
+ */
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -27,6 +30,7 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
+                {/* Redirige pendientes/denegados antes de mostrar el panel */}
                 <ApprovedAccountGate>
                   <DashboardPage />
                 </ApprovedAccountGate>

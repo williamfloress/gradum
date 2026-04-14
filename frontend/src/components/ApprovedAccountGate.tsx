@@ -3,8 +3,8 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
 /**
- * Redirige estudiantes pendientes o con registro denegado a sus pantallas dedicadas.
- * Los administradores y cuentas aprobadas pasan sin cambios.
+ * Sprint 3 — Antes del dashboard: rechazados → /cuenta-denegada, pendientes → /pendiente-aprobacion;
+ * admins y aprobados sin redirección.
  */
 export function ApprovedAccountGate({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();

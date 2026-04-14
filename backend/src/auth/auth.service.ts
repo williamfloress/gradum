@@ -1,3 +1,7 @@
+/**
+ * Sprint 3 — Login: emite token para `pendiente_aprobacion` y `rechazado` (no para `baneado`);
+ * el front redirige; el resto de la API usa ApprovedUserGuard.
+ */
 import {
   BadRequestException,
   ConflictException,
@@ -85,7 +89,7 @@ export class AuthService {
       email: user.email,
       nombre: user.nombre,
       rol: user.rol,
-      estado: user.estado,
+      estado: user.estado, // expuesto al cliente para rutas /pendiente-aprobacion y /cuenta-denegada
     };
 
     const allowed: Array<(typeof user)['estado']> = [

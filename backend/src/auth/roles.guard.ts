@@ -1,3 +1,6 @@
+/**
+ * Sprint 3 — JwtRequestUser incluye `nombre` y `estado` para guards y controladores admin.
+ */
 import {
   CanActivate,
   ExecutionContext,

@@ -1,5 +1,7 @@
 # GRADUM v1 — Pendientes por sprint (backlog)
 
+<!-- Sprint 3: la implementación está comentada en el código (auth guards, admin, rutas React, pages.css). -->
+
 Documento de trabajo para continuar el desarrollo. Lista lo que **aún falta** respecto a [GRADUM - Distribucion de Tareas por Equipo](./GRADUM%20-%20Distribucion%20de%20Tareas%20por%20Equipo.md) y [GRADUM - Plan de Implementacion](./GRADUM%20-%20Plan%20de%20Implementacion.md).
 
 **Última revisión del código:** abril 2026.

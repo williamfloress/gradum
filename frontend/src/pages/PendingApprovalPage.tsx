@@ -1,3 +1,6 @@
+/**
+ * Sprint 3 — Pantalla de espera para estudiante `pendiente_aprobacion`; refresh llama /auth/me.
+ */
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';

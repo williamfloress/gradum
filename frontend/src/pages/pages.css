@@ -1,4 +1,6 @@
-/* Páginas GRADUM — layout alineado con mockups (hero, auth, dashboard) */
+/* Páginas GRADUM — layout alineado con mockups (hero, auth, dashboard)
+ * Sprint 3: bloques .gradum-auth-card--wide, .gradum-pending-actions, .gradum-filter-tabs (admin usuarios).
+ */
 
 .gradum-page {
   min-height: 100svh;
@@ -182,10 +184,12 @@
   background: var(--gradum-bg);
 }
 
+/* Pantallas pendiente-aprobacion / cuenta-denegada (tarjeta un poco más ancha) */
 .gradum-auth-card--wide {
   max-width: 32rem;
 }
 
+/* Botones apilados: comprobar estado + cerrar sesión */
 .gradum-pending-actions {
   display: flex;
   flex-direction: column;
@@ -440,6 +444,7 @@
   color: #fff;
 }
 
+/* Admin usuarios — pestañas Todos / Pendientes / … */
 .gradum-filter-tabs {
   display: flex;
   flex-wrap: wrap;

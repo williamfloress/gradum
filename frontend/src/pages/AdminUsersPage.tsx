@@ -1,3 +1,6 @@
+/**
+ * Sprint 3 — Pestañas por estado; aprobar/denegar vía PATCH …/aprobar y …/rechazar; suspender vía PATCH con body.
+ */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
@@ -51,6 +54,7 @@ export function AdminUsersPage() {
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<UserFilter>('todos');
 
+  // Filtro local sobre GET /admin/usuarios (misma carga para todas las pestañas)
   const filteredUsers = useMemo(() => {
     if (filter === 'todos') return users;
     return users.filter((u) => u.estado === filter);

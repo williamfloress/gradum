@@ -1,3 +1,6 @@
+/**
+ * Sprint 3 — listPendingUsers() para GET /admin/usuarios/pendientes; applyUserAction sin cambios de lógica.
+ */
 import {
   BadRequestException,
   ForbiddenException,
@@ -38,6 +41,7 @@ export class AdminService {
     return rows;
   }
 
+  /** Usuarios en cola de aprobación (más antiguos primero). */
   async listPendingUsers(): Promise<AdminUserListItem[]> {
     const rows = await this.prisma.usuario.findMany({
       where: { estado: 'pendiente_aprobacion' },

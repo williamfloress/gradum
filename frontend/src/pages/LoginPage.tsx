@@ -1,3 +1,6 @@
+/**
+ * Sprint 3 — Mensaje post-registro alineado con login posible en estado pendiente.
+ */
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';

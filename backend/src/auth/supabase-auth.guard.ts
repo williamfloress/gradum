@@ -49,16 +49,15 @@ export class SupabaseAuthGuard implements CanActivate {
       throw new UnauthorizedException('Tu cuenta ha sido suspendida');
     }
 
-    if (dbUser.estado !== 'aprobado') {
-      throw new UnauthorizedException('Cuenta no aprobada');
-    }
+    // pendiente_aprobacion / rechazado: JWT válido pero sin acceso a recursos
+    // protegidos por ApprovedUserGuard (excepto rutas que solo usen este guard).
 
-    // Inyectar datos del usuario en el request
     request.user = {
       userId: dbUser.id,
       email: dbUser.email,
       rol: dbUser.rol,
       nombre: dbUser.nombre,
+      estado: dbUser.estado,
     };
 
     return true;

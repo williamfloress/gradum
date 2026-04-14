@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, Delete, Patch, UseGuards } from '@nestjs/common';
 import { Roles } from '../auth/roles.decorator';
 import { SupabaseAuthGuard } from '../auth/supabase-auth.guard';
+import { ApprovedUserGuard } from '../auth/approved-user.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { PrerrequisitosService } from './prerrequisitos.service';
 import { CreatePrerrequisitoDto } from './dto/create-prerrequisito.dto';
@@ -8,7 +9,7 @@ import { UpdatePrerrequisitoDto } from './dto/update-prerrequisito.dto';
 
 @Controller('materias/:materiaId/prerrequisitos')
 @Roles('admin')
-@UseGuards(SupabaseAuthGuard, RolesGuard)
+@UseGuards(SupabaseAuthGuard, ApprovedUserGuard, RolesGuard)
 export class PrerrequisitosController {
   constructor(private readonly prerrequisitosService: PrerrequisitosService) { }
 

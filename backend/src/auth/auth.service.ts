@@ -80,17 +80,25 @@ export class AuthService {
       throw new UnauthorizedException('Tu cuenta ha sido suspendida');
     }
 
-    if (user.estado !== 'aprobado') {
-      throw new UnauthorizedException('Usuario no aprobado');
+    const sessionUser = {
+      id: user.id,
+      email: user.email,
+      nombre: user.nombre,
+      rol: user.rol,
+      estado: user.estado,
+    };
+
+    const allowed: Array<(typeof user)['estado']> = [
+      'aprobado',
+      'pendiente_aprobacion',
+      'rechazado',
+    ];
+    if (!allowed.includes(user.estado)) {
+      throw new UnauthorizedException('No podés acceder con esta cuenta');
     }
 
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-        nombre: user.nombre,
-        rol: user.rol,
-      },
+      user: sessionUser,
       accessToken: data.session.access_token,
       refreshToken: data.session.refresh_token,
     };

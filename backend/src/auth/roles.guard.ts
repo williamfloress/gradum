@@ -5,13 +5,15 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Rol } from '@prisma/client';
+import { EstadoUsuario, Rol } from '@prisma/client';
 import { ROLES_KEY } from './roles.decorator';
 
 export type JwtRequestUser = {
   userId: string;
   email: string;
   rol: Rol;
+  nombre: string;
+  estado: EstadoUsuario;
 };
 
 @Injectable()

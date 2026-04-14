@@ -7,14 +7,28 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
 import { SupabaseAuthGuard } from './supabase-auth.guard';
+import { ApprovedUserGuard } from './approved-user.guard';
 
 @Module({
   imports: [
     PrismaModule,
     PassportModule,
   ],
-  providers: [AuthService, JwtStrategy, JwtAuthGuard, RolesGuard, SupabaseAuthGuard],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    JwtAuthGuard,
+    RolesGuard,
+    SupabaseAuthGuard,
+    ApprovedUserGuard,
+  ],
   controllers: [AuthController],
-  exports: [AuthService, JwtAuthGuard, RolesGuard, SupabaseAuthGuard],
+  exports: [
+    AuthService,
+    JwtAuthGuard,
+    RolesGuard,
+    SupabaseAuthGuard,
+    ApprovedUserGuard,
+  ],
 })
 export class AuthModule {}

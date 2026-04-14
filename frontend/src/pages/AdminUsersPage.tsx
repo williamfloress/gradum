@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { getApiUrl } from '../lib/config';
@@ -21,6 +21,16 @@ const ESTADO_LABEL: Record<string, string> = {
   baneado: 'Suspendido',
 };
 
+type UserFilter = 'todos' | 'pendiente_aprobacion' | 'aprobado' | 'rechazado' | 'baneado';
+
+const FILTER_TABS: { id: UserFilter; label: string }[] = [
+  { id: 'todos', label: 'Todos' },
+  { id: 'pendiente_aprobacion', label: 'Pendientes' },
+  { id: 'aprobado', label: 'Aprobados' },
+  { id: 'rechazado', label: 'Denegados' },
+  { id: 'baneado', label: 'Suspendidos' },
+];
+
 function formatDate(iso: string) {
   try {
     return new Date(iso).toLocaleString('es', {
@@ -39,6 +49,12 @@ export function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<UserFilter>('todos');
+
+  const filteredUsers = useMemo(() => {
+    if (filter === 'todos') return users;
+    return users.filter((u) => u.estado === filter);
+  }, [users, filter]);
 
   const load = useCallback(async () => {
     if (!token) return;
@@ -70,13 +86,21 @@ export function AdminUsersPage() {
     if (!token) return;
     setPendingId(userId);
     setError(null);
-    const res = await fetch(`${api}/admin/usuarios/${userId}`, {
+    const headers: HeadersInit = { Authorization: `Bearer ${token}` };
+    let url = `${api}/admin/usuarios/${userId}`;
+    let body: string | undefined;
+    if (accion === 'aprobar') {
+      url = `${api}/admin/usuarios/${userId}/aprobar`;
+    } else if (accion === 'denegar') {
+      url = `${api}/admin/usuarios/${userId}/rechazar`;
+    } else {
+      headers['Content-Type'] = 'application/json';
+      body = JSON.stringify({ accion: 'banear' });
+    }
+    const res = await fetch(url, {
       method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ accion }),
+      headers,
+      ...(body !== undefined ? { body } : {}),
     });
     setPendingId(null);
     if (res.status === 401) {
@@ -128,6 +152,21 @@ export function AdminUsersPage() {
           </p>
         )}
 
+        <div className="gradum-filter-tabs" role="tablist" aria-label="Filtrar por estado">
+          {FILTER_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={filter === tab.id}
+              className={`gradum-filter-tab${filter === tab.id ? ' gradum-filter-tab--active' : ''}`}
+              onClick={() => setFilter(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
         <section className="gradum-dash-card gradum-admin-table-wrap" aria-labelledby="users-heading">
           <h2 id="users-heading" className="gradum-sr-only">
             Usuarios registrados
@@ -136,6 +175,8 @@ export function AdminUsersPage() {
             <p className="gradum-muted-text">Cargando usuarios…</p>
           ) : users.length === 0 ? (
             <p className="gradum-muted-text">No hay usuarios registrados.</p>
+          ) : filteredUsers.length === 0 ? (
+            <p className="gradum-muted-text">No hay usuarios en esta categoría.</p>
           ) : (
             <div className="gradum-table-scroll">
               <table className="gradum-table">
@@ -150,7 +191,7 @@ export function AdminUsersPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((u) => (
+                  {filteredUsers.map((u) => (
                     <tr key={u.id}>
                       <td>{u.nombre}</td>
                       <td>{u.email}</td>

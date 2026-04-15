@@ -13,6 +13,7 @@ import { AdminPensumMateriasPage } from './pages/AdminPensumMateriasPage';
 import { ApprovedAccountGate } from './components/ApprovedAccountGate';
 import { PendingApprovalPage } from './pages/PendingApprovalPage';
 import { CuentaDenegadaPage } from './pages/CuentaDenegadaPage';
+import { OnboardingPage } from './pages/OnboardingPage';
 import './App.css';
 
 function App() {
@@ -46,6 +47,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <CuentaDenegadaPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/onboarding"
+            element={
+              <ProtectedRoute>
+                <ApprovedAccountGate>
+                  <OnboardingPage />
+                </ApprovedAccountGate>
               </ProtectedRoute>
             }
           />

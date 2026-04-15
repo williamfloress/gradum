@@ -10,6 +10,7 @@ import { DegreeModule } from './degree/degree.module';
 import { PensumModule } from './pensum/pensum.module';
 import { MateriaModule } from './materia/materia.module';
 import { PrerrequisitosModule } from './prerrequisitos/prerrequisitos.module';
+import { PerfilesModule } from './perfiles/perfiles.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PrerrequisitosModule } from './prerrequisitos/prerrequisitos.module';
     PensumModule,
     MateriaModule,
     PrerrequisitosModule,
+    PerfilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

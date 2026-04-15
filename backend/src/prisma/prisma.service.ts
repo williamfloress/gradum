@@ -75,4 +75,25 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   get prerrequisito(): any {
     return this.prisma.prerrequisito;
   }
+
+  /**
+   * Acceso directo al modelo perfilEstudiante
+   */
+  get perfilEstudiante(): any {
+    return this.prisma.perfilEstudiante;
+  }
+
+  /**
+   * Acceso directo al modelo inscripcionSemestre
+   */
+  get inscripcionSemestre(): any {
+    return this.prisma.inscripcionSemestre;
+  }
+
+  /**
+   * Acceso directo a $transaction del PrismaClient interno
+   */
+  get $transaction(): PrismaClient['$transaction'] {
+    return this.prisma.$transaction.bind(this.prisma);
+  }
 }

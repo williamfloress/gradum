@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, IsEnum } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsEnum, IsArray } from 'class-validator';
 import { TipoIngreso } from '@prisma/client';
 
 export class CreatePerfilDto {
@@ -27,4 +27,12 @@ export class CreatePerfilDto {
   @IsString()
   @IsNotEmpty()
   semestreActual: string;
+
+  /**
+   * IDs de las materias seleccionadas durante el registro inicial (solo para ingreso avanzado).
+   */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  materiaIds?: string[];
 }

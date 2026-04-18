@@ -11,6 +11,7 @@ import { PensumModule } from './pensum/pensum.module';
 import { MateriaModule } from './materia/materia.module';
 import { PrerrequisitosModule } from './prerrequisitos/prerrequisitos.module';
 import { PerfilesModule } from './perfiles/perfiles.module';
+import { InscripcionesModule } from './inscripciones/inscripciones.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PerfilesModule } from './perfiles/perfiles.module';
     MateriaModule,
     PrerrequisitosModule,
     PerfilesModule,
+    InscripcionesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

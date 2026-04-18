@@ -9,7 +9,7 @@ import { CreatePerfilDto } from './dto/create-perfil.dto';
 
 @Injectable()
 export class PerfilesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   /**
    * Crea el perfil del estudiante luego de que fue aprobado por el admin.
@@ -107,6 +107,17 @@ export class PerfilesService {
           });
           inscripcionesCreadas = materiasSem1.length;
         }
+      } else if (dto.tipoIngreso === 'avanzado' && dto.materiaIds && dto.materiaIds.length > 0) {
+        await tx.inscripcionSemestre.createMany({
+          data: dto.materiaIds.map((id: string) => ({
+            usuarioId: userId,
+            materiaId: id,
+            semestreEtiqueta: dto.semestreActual,
+            estado: 'en_curso',
+          })),
+          skipDuplicates: true,
+        });
+        inscripcionesCreadas = dto.materiaIds.length;
       }
 
       return { perfil, inscripcionesCreadas };

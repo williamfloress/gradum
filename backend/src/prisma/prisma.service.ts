@@ -91,6 +91,19 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
+   * Acceso directo al modelo PlanEvaluacion (planes de evaluación por inscripción, Sprint 6).
+   * Expuesto como getter para alinear el patrón del resto de delegados de este servicio.
+   */
+  get planEvaluacion(): any {
+    return this.prisma.planEvaluacion;
+  }
+
+  /** Modelo Evaluacion (ítems bajo un plan; Sprint 6 S6-3). */
+  get evaluacion(): any {
+    return this.prisma.evaluacion;
+  }
+
+  /**
    * Acceso directo a $transaction del PrismaClient interno
    */
   get $transaction(): PrismaClient['$transaction'] {

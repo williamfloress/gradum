@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   DndContext,
   DragOverlay,
@@ -31,6 +32,7 @@ interface SortableItemProps {
   nombre: string;
   codigo?: string | null;
   semestre?: number;
+  inscripcionId?: string; // si se pasa, muestra link al plan
 }
 
 const SortableItem: React.FC<SortableItemProps> = (props) => {
@@ -59,6 +61,15 @@ const SortableItem: React.FC<SortableItemProps> = (props) => {
       <div style={{ fontSize: '0.7rem', color: 'var(--gradum-muted)' }}>
         Semestre {props.semestre} {props.codigo && `(${props.codigo})`}
       </div>
+      {props.inscripcionId && (
+        <Link
+          to={`/inscripciones/${props.inscripcionId}/plan`}
+          style={{ fontSize: '0.75rem', color: 'var(--gradum-primary)', marginTop: '0.3rem', display: 'inline-block' }}
+          onClick={e => e.stopPropagation()}
+        >
+          Ver plan de evaluación →
+        </Link>
+      )}
     </div>
   );
 };
@@ -117,7 +128,7 @@ export const SemesterEnrollmentDnd: React.FC<SemesterDndProps> = ({ disponibles,
         
         <DroppableColumn id="inscritas" title="Seleccionadas" style={{ border: '2px dashed var(--gradum-primary)', padding: '1rem', borderRadius: '0.75rem', minHeight: '200px' }}>
           <SortableContext id="inscritas" items={inscritas.map(i => i.id)} strategy={verticalListSortingStrategy}>
-            {inscritas.map(i => <SortableItem key={i.id} id={i.id} nombre={i.materia.nombre} semestre={i.materia.semestreNumero} />)}
+            {inscritas.map(i => <SortableItem key={i.id} id={i.id} nombre={i.materia.nombre} semestre={i.materia.semestreNumero} inscripcionId={i.id} />)}
           </SortableContext>
         </DroppableColumn>
 

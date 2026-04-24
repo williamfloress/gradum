@@ -14,6 +14,7 @@ import { ApprovedAccountGate } from './components/ApprovedAccountGate';
 import { PendingApprovalPage } from './pages/PendingApprovalPage';
 import { CuentaDenegadaPage } from './pages/CuentaDenegadaPage';
 import { OnboardingPage } from './pages/OnboardingPage';
+import { PlanEvaluacionPage } from './pages/PlanEvaluacionPage';
 import './App.css';
 
 function App() {
@@ -56,6 +57,16 @@ function App() {
               <ProtectedRoute>
                 <ApprovedAccountGate>
                   <OnboardingPage />
+                </ApprovedAccountGate>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inscripciones/:inscripcionId/plan"
+            element={
+              <ProtectedRoute>
+                <ApprovedAccountGate>
+                  <PlanEvaluacionPage />
                 </ApprovedAccountGate>
               </ProtectedRoute>
             }

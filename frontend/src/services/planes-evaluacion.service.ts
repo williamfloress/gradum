@@ -39,6 +39,7 @@ export interface CreateEvaluacionDto {
   observacion?: string;
   notaEsperada?: number;
   notaReal?: number;
+  archivos?: string[];
 }
 
 export interface UpdateEvaluacionDto {
@@ -46,6 +47,7 @@ export interface UpdateEvaluacionDto {
   observacion?: string;
   notaEsperada?: number | null;
   notaReal?: number | null;
+  archivos?: string[];
 }
 
 // ——— Planes ———

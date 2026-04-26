@@ -1,12 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import { api } from '../services/api';
+// Servicio centralizado de inscripciones; evita llamar al api directamente con rutas hardcodeadas
+import { inscripcionesService } from '../services/inscripciones.service';
 import {
   planesEvaluacionService,
   type PlanEvaluacion,
   type Evaluacion,
 } from '../services/planes-evaluacion.service';
+import { uploadEvaluacionFile } from '../lib/supabase';
 import './pages.css';
 import './plan-evaluacion.css';
 
@@ -34,18 +36,39 @@ interface EvaluacionRowProps {
   ev: Evaluacion;
   inscripcionId: string;
   planId: string;
+  userId: string;
   onUpdated: () => void;
 }
 
-function EvaluacionRow({ ev, inscripcionId, planId, onUpdated }: EvaluacionRowProps) {
+function EvaluacionRow({ ev, inscripcionId, planId, userId, onUpdated }: EvaluacionRowProps) {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [fields, setFields] = useState({
     fechaLimite: ev.fechaLimite ? ev.fechaLimite.slice(0, 10) : '',
     observacion: ev.observacion ?? '',
     notaEsperada: ev.notaEsperada ?? '',
     notaReal: ev.notaReal ?? '',
   });
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    setUploading(true);
+    try {
+      const url = await uploadEvaluacionFile(userId, ev.id, file);
+      const updatedArchivos = ev.archivos ? [...ev.archivos, url] : [url];
+      await planesEvaluacionService.updateEvaluacion(inscripcionId, planId, ev.id, {
+        archivos: updatedArchivos
+      });
+      onUpdated();
+    } catch (err: any) {
+      alert(err.message || 'Error al subir archivo');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -78,6 +101,7 @@ function EvaluacionRow({ ev, inscripcionId, planId, onUpdated }: EvaluacionRowPr
   if (editing) {
     return (
       <tr className="gpe-ev-row gpe-ev-row--editing">
+        {/* Campo: fecha límite */}
         <td>
           <input
             id={`ev-fecha-${ev.id}`}
@@ -87,6 +111,7 @@ function EvaluacionRow({ ev, inscripcionId, planId, onUpdated }: EvaluacionRowPr
             onChange={e => setFields(f => ({ ...f, fechaLimite: e.target.value }))}
           />
         </td>
+        {/* Campo: observación libre */}
         <td>
           <input
             id={`ev-obs-${ev.id}`}
@@ -97,6 +122,7 @@ function EvaluacionRow({ ev, inscripcionId, planId, onUpdated }: EvaluacionRowPr
             onChange={e => setFields(f => ({ ...f, observacion: e.target.value }))}
           />
         </td>
+        {/* Campo: nota esperada (0–5) */}
         <td>
           <input
             id={`ev-esperada-${ev.id}`}
@@ -108,6 +134,7 @@ function EvaluacionRow({ ev, inscripcionId, planId, onUpdated }: EvaluacionRowPr
             onChange={e => setFields(f => ({ ...f, notaEsperada: e.target.value }))}
           />
         </td>
+        {/* Campo: nota real — al guardar dispara recalculo de nota definitiva en el backend */}
         <td>
           <input
             id={`ev-real-${ev.id}`}
@@ -119,6 +146,25 @@ function EvaluacionRow({ ev, inscripcionId, planId, onUpdated }: EvaluacionRowPr
             onChange={e => setFields(f => ({ ...f, notaReal: e.target.value }))}
           />
         </td>
+        {/* Columna de archivos: disponible incluso en modo edición */}
+        <td className="gpe-archivos-cell">
+          {ev.archivos && ev.archivos.length > 0 && (
+            <div className="gpe-archivos">
+              {ev.archivos.map((url, i) => (
+                <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                   className="gradum-link gpe-archivo-link">
+                  📎 Archivo {i + 1}
+                </a>
+              ))}
+            </div>
+          )}
+          <label className="gradum-btn gradum-btn--outline gradum-btn--sm gpe-upload-btn"
+                 style={{ cursor: uploading ? 'wait' : 'pointer' }}>
+            {uploading ? 'Subiendo…' : '📎 Subir'}
+            <input type="file" hidden onChange={handleFileUpload} disabled={uploading} />
+          </label>
+        </td>
+        {/* Acciones guardar / cancelar */}
         <td>
           <div className="gradum-admin-actions">
             <button
@@ -144,11 +190,13 @@ function EvaluacionRow({ ev, inscripcionId, planId, onUpdated }: EvaluacionRowPr
 
   return (
     <tr className="gpe-ev-row">
+      {/* Datos de solo lectura */}
       <td>{ev.fechaLimite ? ev.fechaLimite.slice(0, 10) : <span className="gpe-empty">—</span>}</td>
       <td>{ev.observacion || <span className="gpe-empty">—</span>}</td>
       <td className="gpe-nota">{ev.notaEsperada ?? <span className="gpe-empty">—</span>}</td>
       <td className="gpe-nota gpe-nota--real">{ev.notaReal ?? <span className="gpe-empty">—</span>}</td>
-      <td>
+      {/* Columna de archivos con upload y lista de enlaces */}
+      <td className="gpe-archivos-cell">
         <div className="gradum-admin-actions">
           <button
             id={`ev-edit-${ev.id}`}
@@ -165,6 +213,25 @@ function EvaluacionRow({ ev, inscripcionId, planId, onUpdated }: EvaluacionRowPr
             Eliminar
           </button>
         </div>
+
+        {/* Sección de archivos: enlace a cada archivo + botón de subida */}
+        <div style={{ marginTop: '0.75rem' }}>
+          {ev.archivos && ev.archivos.length > 0 && (
+            <div className="gpe-archivos">
+              {ev.archivos.map((url, i) => (
+                <a key={i} href={url} target="_blank" rel="noopener noreferrer"
+                   className="gradum-link gpe-archivo-link">
+                  📎 Archivo {i + 1}
+                </a>
+              ))}
+            </div>
+          )}
+          <label className="gradum-btn gradum-btn--outline gradum-btn--sm gpe-upload-btn"
+                 style={{ cursor: uploading ? 'wait' : 'pointer' }}>
+            {uploading ? 'Subiendo…' : '📎 Subir archivo'}
+            <input type="file" hidden onChange={handleFileUpload} disabled={uploading} />
+          </label>
+        </div>
       </td>
     </tr>
   );
@@ -175,10 +242,11 @@ function EvaluacionRow({ ev, inscripcionId, planId, onUpdated }: EvaluacionRowPr
 interface PlanCardProps {
   plan: PlanEvaluacion;
   inscripcionId: string;
+  userId: string;
   onUpdated: () => void;
 }
 
-function PlanCard({ plan, inscripcionId, onUpdated }: PlanCardProps) {
+function PlanCard({ plan, inscripcionId, userId, onUpdated }: PlanCardProps) {
   const [editingPlan, setEditingPlan] = useState(false);
   const [planFields, setPlanFields] = useState({
     nombre: plan.nombre,
@@ -186,22 +254,34 @@ function PlanCard({ plan, inscripcionId, onUpdated }: PlanCardProps) {
     orden: String(plan.orden),
   });
   const [savingPlan, setSavingPlan] = useState(false);
+  // Error inline al editar el plan (ej. supera el 100 %)
+  const [planEditError, setPlanEditError] = useState<string | null>(null);
+
   const [addingEv, setAddingEv] = useState(false);
   const [newEv, setNewEv] = useState({ fechaLimite: '', observacion: '', notaEsperada: '', notaReal: '' });
   const [savingEv, setSavingEv] = useState(false);
+  // Error inline al agregar una evaluación
+  const [evError, setEvError] = useState<string | null>(null);
 
   const handleSavePlan = async () => {
+    // Validación local antes de llamar al backend
+    if (!planFields.nombre.trim()) { setPlanEditError('El nombre es obligatorio'); return; }
+    const pct = parseFloat(planFields.porcentaje);
+    if (isNaN(pct) || pct <= 0) { setPlanEditError('El porcentaje debe ser mayor a 0'); return; }
+
     setSavingPlan(true);
+    setPlanEditError(null);
     try {
       await planesEvaluacionService.updatePlan(inscripcionId, plan.id, {
-        nombre: planFields.nombre,
-        porcentaje: parseFloat(planFields.porcentaje),
+        nombre: planFields.nombre.trim(),
+        porcentaje: pct,
         orden: parseInt(planFields.orden) || 0,
       });
       setEditingPlan(false);
       onUpdated();
     } catch (e: any) {
-      alert(e.message);
+      // Muestra el error del backend (ej. "suma superaría 100 %") de forma inline
+      setPlanEditError(e.message);
     } finally {
       setSavingPlan(false);
     }
@@ -213,12 +293,14 @@ function PlanCard({ plan, inscripcionId, onUpdated }: PlanCardProps) {
       await planesEvaluacionService.deletePlan(inscripcionId, plan.id);
       onUpdated();
     } catch (e: any) {
-      alert(e.message);
+      // Error al eliminar (ej. permisos): mostrado como alerta ya que no hay formulario abierto
+      setPlanEditError(e.message);
     }
   };
 
   const handleAddEv = async () => {
     setSavingEv(true);
+    setEvError(null);
     try {
       await planesEvaluacionService.createEvaluacion(inscripcionId, plan.id, {
         fechaLimite: newEv.fechaLimite || undefined,
@@ -230,7 +312,8 @@ function PlanCard({ plan, inscripcionId, onUpdated }: PlanCardProps) {
       setAddingEv(false);
       onUpdated();
     } catch (e: any) {
-      alert(e.message);
+      // Error al crear evaluación: mostrado junto al formulario de nueva fila
+      setEvError(e.message);
     } finally {
       setSavingEv(false);
     }
@@ -242,6 +325,10 @@ function PlanCard({ plan, inscripcionId, onUpdated }: PlanCardProps) {
       <div className="gpe-plan-header">
         {editingPlan ? (
           <div className="gpe-plan-edit-form">
+            {/* Mensaje de error inline para edición de plan (incluye error 400 de porcentaje del backend) */}
+            {planEditError && (
+              <p className="gradum-error gpe-plan-edit-error" role="alert">{planEditError}</p>
+            )}
             <input
               id={`plan-nombre-${plan.id}`}
               className="gradum-inline-input"
@@ -275,7 +362,7 @@ function PlanCard({ plan, inscripcionId, onUpdated }: PlanCardProps) {
               </button>
               <button
                 className="gradum-btn gradum-btn--secondary gradum-btn--sm"
-                onClick={() => setEditingPlan(false)} disabled={savingPlan}
+                onClick={() => { setEditingPlan(false); setPlanEditError(null); }} disabled={savingPlan}
               >
                 Cancelar
               </button>
@@ -314,17 +401,20 @@ function PlanCard({ plan, inscripcionId, onUpdated }: PlanCardProps) {
           <table className="gradum-table gpe-ev-table" aria-label={`Evaluaciones del plan ${plan.nombre}`}>
             <thead>
               <tr>
+                {/* Columnas de la tabla de evaluaciones (S6-6 §8.2) */}
                 <th>Fecha límite</th>
                 <th>Observación</th>
                 <th>Nota esperada</th>
                 <th>Nota real</th>
+                <th>Archivos</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {plan.evaluaciones.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="gpe-ev-empty">Sin evaluaciones</td>
+                  {/* colspan 6 porque ahora hay 6 columnas (incluye Archivos) */}
+                  <td colSpan={6} className="gpe-ev-empty">Sin evaluaciones</td>
                 </tr>
               ) : (
                 plan.evaluaciones.map(ev => (
@@ -333,6 +423,7 @@ function PlanCard({ plan, inscripcionId, onUpdated }: PlanCardProps) {
                     ev={ev}
                     inscripcionId={inscripcionId}
                     planId={plan.id}
+                    userId={userId}
                     onUpdated={onUpdated}
                   />
                 ))
@@ -340,7 +431,16 @@ function PlanCard({ plan, inscripcionId, onUpdated }: PlanCardProps) {
 
               {/* Fila de nueva evaluación */}
               {addingEv && (
-                <tr className="gpe-ev-row gpe-ev-row--new">
+                <>
+                  {/* Error inline al crear evaluación (error del backend visible en la tabla) */}
+                  {evError && (
+                    <tr>
+                      <td colSpan={6}>
+                        <p className="gradum-error" role="alert" style={{ margin: '0.25rem 0' }}>{evError}</p>
+                      </td>
+                    </tr>
+                  )}
+                  <tr className="gpe-ev-row gpe-ev-row--new">
                   <td>
                     <input
                       id={`new-ev-fecha-${plan.id}`}
@@ -380,6 +480,8 @@ function PlanCard({ plan, inscripcionId, onUpdated }: PlanCardProps) {
                       onChange={e => setNewEv(f => ({ ...f, notaReal: e.target.value }))}
                     />
                   </td>
+                  {/* Archivos: vacío en nueva fila (se agregan luego desde la fila existente) */}
+                  <td className="gpe-archivos-cell"><span className="gpe-empty">—</span></td>
                   <td>
                     <div className="gradum-admin-actions">
                       <button
@@ -391,13 +493,14 @@ function PlanCard({ plan, inscripcionId, onUpdated }: PlanCardProps) {
                       </button>
                       <button
                         className="gradum-btn gradum-btn--secondary gradum-btn--sm"
-                        onClick={() => setAddingEv(false)} disabled={savingEv}
+                        onClick={() => { setAddingEv(false); setEvError(null); }} disabled={savingEv}
                       >
                         Cancelar
                       </button>
                     </div>
                   </td>
                 </tr>
+                </>
               )}
             </tbody>
           </table>
@@ -428,7 +531,7 @@ interface InscripcionInfo {
 }
 
 export function PlanEvaluacionPage() {
-  useAuth();
+  const { user } = useAuth();
   const { inscripcionId } = useParams<{ inscripcionId: string }>();
   const [inscripcion, setInscripcion] = useState<InscripcionInfo | null>(null);
   const [planes, setPlanes] = useState<PlanEvaluacion[]>([]);
@@ -445,8 +548,9 @@ export function PlanEvaluacionPage() {
     if (!inscripcionId) return;
     try {
       setError(null);
+      // Carga paralela: datos de la inscripción (estado + notaDefinitiva) y lista de planes con evaluaciones
       const [inscData, planesData] = await Promise.all([
-        api.get<InscripcionInfo>(`/inscripciones/${inscripcionId}`),
+        inscripcionesService.getInscripcion(inscripcionId),
         planesEvaluacionService.getPlanes(inscripcionId),
       ]);
       setInscripcion(inscData);
@@ -497,11 +601,13 @@ export function PlanEvaluacionPage() {
 
   return (
     <div className="gradum-page gradum-dashboard">
+      {/* Cabecera: logo + breadcrumb con link funcional a Inscripciones */}
       <header className="gradum-dash-header gradum-dash-header--wide">
         <Link to="/" className="gradum-logo gradum-logo--link">GRADUM</Link>
         <nav className="gradum-dash-nav">
           <Link to="/dashboard" className="gradum-link">Dashboard</Link>
-          <span className="gradum-dash-nav__current">/ Inscripciones</span>
+          <span className="gradum-dash-nav__current">/</span>
+          <Link to="/inscripciones" className="gradum-link">Inscripciones</Link>
           <span className="gradum-dash-nav__current">/ Plan de evaluación</span>
         </nav>
       </header>
@@ -639,6 +745,7 @@ export function PlanEvaluacionPage() {
                   key={plan.id}
                   plan={plan}
                   inscripcionId={inscripcionId!}
+                  userId={user?.id || ''}
                   onUpdated={loadData}
                 />
               ))}

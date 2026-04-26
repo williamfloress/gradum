@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   DndContext,
   DragOverlay,
@@ -31,10 +32,24 @@ interface SortableItemProps {
   nombre: string;
   codigo?: string | null;
   semestre?: number;
+  /** Si se proporciona, muestra el link al plan de evaluación */
+  inscripcionId?: string;
+  /** Estado de la inscripción para mostrar badge de color */
+  estado?: 'en_curso' | 'aprobada' | 'reprobada';
+  /** Nota definitiva calculada por el backend */
+  notaDefinitiva?: string | null;
 }
 
 const SortableItem: React.FC<SortableItemProps> = (props) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: props.id });
+
+  // Mapa de estados a etiquetas y colores para el badge de la tarjeta
+  const estadoConfig: Record<string, { label: string; color: string }> = {
+    aprobada:  { label: 'Aprobada',  color: '#5eead4' },
+    reprobada: { label: 'Reprobada', color: '#fca5a5' },
+    en_curso:  { label: 'En curso',  color: '#fcd34d' },
+  };
+  const ec = props.estado ? estadoConfig[props.estado] : null;
 
   const style = {
     transform: CSS.Translate.toString(transform),
@@ -55,10 +70,42 @@ const SortableItem: React.FC<SortableItemProps> = (props) => {
       {...listeners}
       className="gradum-dash-card gradum-dash-card--compact"
     >
+      {/* Nombre de la materia */}
       <div style={{ fontWeight: 600 }}>{props.nombre}</div>
+
+      {/* Semestre y código */}
       <div style={{ fontSize: '0.7rem', color: 'var(--gradum-muted)' }}>
         Semestre {props.semestre} {props.codigo && `(${props.codigo})`}
       </div>
+
+      {/* Badge de estado + nota definitiva (solo en inscritas) */}
+      {ec && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.4rem', flexWrap: 'wrap' }}>
+          <span style={{
+            fontSize: '0.7rem', fontWeight: 600, padding: '0.15rem 0.45rem',
+            borderRadius: '999px', border: `1px solid ${ec.color}44`,
+            background: `${ec.color}18`, color: ec.color
+          }}>
+            {ec.label}
+          </span>
+          {props.notaDefinitiva != null && (
+            <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--gradum-primary)' }}>
+              {parseFloat(props.notaDefinitiva).toFixed(2)}
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Link al plan de evaluación */}
+      {props.inscripcionId && (
+        <Link
+          to={`/inscripciones/${props.inscripcionId}/plan`}
+          style={{ fontSize: '0.75rem', color: 'var(--gradum-primary)', marginTop: '0.3rem', display: 'inline-block' }}
+          onClick={e => e.stopPropagation()}
+        >
+          Ver plan de evaluación →
+        </Link>
+      )}
     </div>
   );
 };
@@ -117,7 +164,18 @@ export const SemesterEnrollmentDnd: React.FC<SemesterDndProps> = ({ disponibles,
         
         <DroppableColumn id="inscritas" title="Seleccionadas" style={{ border: '2px dashed var(--gradum-primary)', padding: '1rem', borderRadius: '0.75rem', minHeight: '200px' }}>
           <SortableContext id="inscritas" items={inscritas.map(i => i.id)} strategy={verticalListSortingStrategy}>
-            {inscritas.map(i => <SortableItem key={i.id} id={i.id} nombre={i.materia.nombre} semestre={i.materia.semestreNumero} />)}
+            {inscritas.map(i => (
+              <SortableItem
+                key={i.id}
+                id={i.id}
+                nombre={i.materia.nombre}
+                semestre={i.materia.semestreNumero}
+                inscripcionId={i.id}
+                // Pasa el estado y la nota definitiva para mostrar el badge y la calificación
+                estado={i.estado}
+                notaDefinitiva={i.notaDefinitiva}
+              />
+            ))}
           </SortableContext>
         </DroppableColumn>
 

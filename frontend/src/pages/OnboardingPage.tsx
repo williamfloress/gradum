@@ -101,7 +101,7 @@ export function OnboardingPage() {
     setSubmitError('');
 
     if (!carreraId) { setSubmitError('Selecciona una carrera.'); return; }
-    if (!pensumId)  { setSubmitError('Selecciona un pensum.'); return; }
+    if (!pensumId) { setSubmitError('Selecciona un pensum.'); return; }
     if (!semestreActual.trim()) { setSubmitError('Ingresa el semestre actual (ej: 2025-1).'); return; }
 
     setSubmitting(true);

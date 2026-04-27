@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { getApiUrl } from '../lib/config';
+import { SemesterEnrollmentDnd } from '../components/SemesterEnrollmentDnd';
 import './pages.css';
 
 /* ─── Tipos ─────────────────────────────────────────── */
@@ -28,7 +28,6 @@ function pensumLabel(p: Pensum): string {
 /* ─── Componente Principal ──────────────────────────────────────── */
 export function OnboardingPage() {
   const { token } = useAuth();
-  const navigate = useNavigate();
   const api = getApiUrl();
 
   /* ── Estado de Carreras ── */
@@ -43,6 +42,11 @@ export function OnboardingPage() {
   const [loadingPensums, setLoadingPensums] = useState(false);
   const [tipoIngreso, setTipoIngreso] = useState<TipoIngreso>('primer_semestre');
   const [semestreActual, setSemestreActual] = useState('');
+
+  /* ── Estado de Materias (Solo para Avanzado) ── */
+  const [materiasDelPensum, setMateriasDelPensum] = useState<any[]>([]);
+  const [selectedMateriaIds, setSelectedMateriaIds] = useState<string[]>([]);
+  const [loadingMaterias, setLoadingMaterias] = useState(false);
 
   /* ── Estado de Envío ── */
   const [submitting, setSubmitting] = useState(false);
@@ -95,6 +99,40 @@ export function OnboardingPage() {
       .finally(() => setLoadingPensums(false));
   }, [carreraId, api, token]);
 
+  /* ── Cargar materias si es Avanzado ── */
+  useEffect(() => {
+    if (tipoIngreso === 'avanzado' && pensumId) {
+      setLoadingMaterias(true);
+      fetch(`${api}/pensum/${pensumId}/materia`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then(async (r) => {
+          if (!r.ok) {
+            const err = await r.json().catch(() => ({}));
+            throw new Error(err.message || 'Error al cargar las materias');
+          }
+          return r.json();
+        })
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setMateriasDelPensum(data);
+          } else {
+            setMateriasDelPensum([]);
+          }
+          setSelectedMateriaIds([]); // Reiniciar seleccionados al cambiar pensum/tipo
+        })
+        .catch(err => {
+          console.error(err);
+          setMateriasDelPensum([]);
+          setSelectedMateriaIds([]);
+        })
+        .finally(() => setLoadingMaterias(false));
+    } else {
+      setMateriasDelPensum([]);
+      setSelectedMateriaIds([]);
+    }
+  }, [tipoIngreso, pensumId, api, token]);
+
   /* ── Manejador de envío ── */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -117,6 +155,7 @@ export function OnboardingPage() {
           pensumId,
           tipoIngreso,
           semestreActual: semestreActual.trim(),
+          materiaIds: selectedMateriaIds,
         }),
       });
 
@@ -256,6 +295,37 @@ export function OnboardingPage() {
               Usa el formato año-número (ejemplo: 2025-1, 2025-2)
             </small>
           </div>
+
+          {/* ── Drag & Drop de Materias (Solo si es Avanzado) ── */}
+          {tipoIngreso === 'avanzado' && pensumId && (
+            <div className="gradum-field" style={{ marginTop: '1.5rem', borderTop: '1px solid var(--gradum-border)', paddingTop: '1.5rem' }}>
+              <span id="label-materias">Inscripción Inicial</span>
+              <p className="gradum-muted-text" style={{ fontSize: '0.85rem' }}>
+                Como estudiante avanzado, selecciona las materias que estarás cursando en este semestre ({semestreActual || '...'}):
+              </p>
+
+              {loadingMaterias ? (
+                <p className="gradum-loading">Cargando materias del pensum...</p>
+              ) : (
+                <SemesterEnrollmentDnd
+                  disponibles={materiasDelPensum.filter(m => !selectedMateriaIds.includes(m.id))}
+                  inscritas={materiasDelPensum
+                    .filter(m => selectedMateriaIds.includes(m.id))
+                    .map(m => ({
+                      id: m.id,
+                      materiaId: m.id,
+                      usuarioId: '',
+                      semestreEtiqueta: semestreActual,
+                      estado: 'en_curso',
+                      materia: m
+                    }))
+                  }
+                  onEnroll={async (id: string) => setSelectedMateriaIds(prev => [...prev, id])}
+                  onUnenroll={async (id: string) => setSelectedMateriaIds(prev => prev.filter(mid => mid !== id))}
+                />
+              )}
+            </div>
+          )}
 
           {/* ── Error ── */}
           {submitError && <p className="gradum-error">{submitError}</p>}

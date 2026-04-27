@@ -17,12 +17,12 @@ import { ApprovedUserGuard } from '../auth/approved-user.guard';
 import { RolesGuard } from '../auth/roles.guard';
 
 @Controller('pensum/:pensumId/materia')
-@Roles('admin')
 @UseGuards(SupabaseAuthGuard, ApprovedUserGuard, RolesGuard)
 export class MateriaController {
   constructor(private readonly materiaService: MateriaService) { }
 
   @Post()
+  @Roles('admin')
   create(@Param('pensumId') pensumId: string, @Body() createMateriaDto: CreateMateriaDto) {
     return this.materiaService.create(pensumId, createMateriaDto);
   }
@@ -33,11 +33,13 @@ export class MateriaController {
   }
 
   @Patch(':id')
+  @Roles('admin')
   update(@Param('id') id: string, @Body() updateMateriaDto: UpdateMateriaDto) {
     return this.materiaService.update(id, updateMateriaDto);
   }
 
   @Delete(':id')
+  @Roles('admin')
   remove(@Param('id') id: string) {
     return this.materiaService.remove(id);
   }

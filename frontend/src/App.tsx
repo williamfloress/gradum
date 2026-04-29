@@ -14,6 +14,9 @@ import { ApprovedAccountGate } from './components/ApprovedAccountGate';
 import { PendingApprovalPage } from './pages/PendingApprovalPage';
 import { CuentaDenegadaPage } from './pages/CuentaDenegadaPage';
 import { OnboardingPage } from './pages/OnboardingPage';
+import { PlanEvaluacionPage } from './pages/PlanEvaluacionPage';
+// Página de inscripciones del estudiante (Sprint 5); registrada aquí para que el breadcrumb de PlanEvaluacionPage funcione
+import { InscripcionesPage } from './pages/InscripcionesPage';
 import './App.css';
 
 function App() {
@@ -56,6 +59,27 @@ function App() {
               <ProtectedRoute>
                 <ApprovedAccountGate>
                   <OnboardingPage />
+                </ApprovedAccountGate>
+              </ProtectedRoute>
+            }
+          />
+          {/* Ruta de inscripciones: permite gestionar las materias del semestre actual */}
+          <Route
+            path="/inscripciones"
+            element={
+              <ProtectedRoute>
+                <ApprovedAccountGate>
+                  <InscripcionesPage />
+                </ApprovedAccountGate>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/inscripciones/:inscripcionId/plan"
+            element={
+              <ProtectedRoute>
+                <ApprovedAccountGate>
+                  <PlanEvaluacionPage />
                 </ApprovedAccountGate>
               </ProtectedRoute>
             }

@@ -33,5 +33,7 @@ export const api = {
   get: <T>(path: string, options?: RequestInit) => request<T>(path, { ...options, method: 'GET' }),
   post: <T>(path: string, body?: any, options?: RequestInit) =>
     request<T>(path, { ...options, method: 'POST', body: JSON.stringify(body) }),
+  patch: <T>(path: string, body?: any, options?: RequestInit) =>
+    request<T>(path, { ...options, method: 'PATCH', body: JSON.stringify(body) }),
   delete: <T>(path: string, options?: RequestInit) => request<T>(path, { ...options, method: 'DELETE' }),
 };

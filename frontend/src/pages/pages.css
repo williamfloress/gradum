@@ -255,6 +255,7 @@
   background: var(--gradum-input-bg);
   color: var(--gradum-heading);
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 .gradum-field input::placeholder {
@@ -560,6 +561,7 @@
   color: var(--gradum-heading);
   font-family: inherit;
   font-size: 0.875rem;
+  box-sizing: border-box;
 }
 
 .gradum-inline-input--num {
@@ -680,5 +682,190 @@
   .gradum-nav {
     width: 100%;
     justify-content: flex-end;
+  }
+}
+
+/* ——— Dashboard con Sidebar ——— */
+.gradum-dash-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100svh;
+}
+
+/* Header full-width encima del grid */
+.gradum-dash-topbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.5rem;
+  border-bottom: 1px solid var(--gradum-border);
+  background: var(--gradum-surface);
+}
+
+/* Sidebar izquierdo */
+.gradum-dash-sidebar {
+  background: var(--gradum-surface);
+  border-right: 1px solid var(--gradum-border);
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.gradum-dash-sidebar__section-label {
+  padding: 0.5rem 1.25rem 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gradum-muted);
+}
+
+.gradum-dash-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.6rem 1.25rem;
+  margin: 0 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--gradum-text);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.gradum-dash-sidebar__item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--gradum-heading);
+}
+
+.gradum-dash-sidebar__item--active {
+  background: rgba(20, 184, 166, 0.1);
+  color: var(--gradum-primary);
+  font-weight: 600;
+}
+
+.gradum-dash-sidebar__icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.gradum-dash-sidebar__item--active .gradum-dash-sidebar__icon {
+  opacity: 1;
+}
+
+/* Área de contenido principal */
+.gradum-dash-content {
+  padding: 2rem 2.5rem;
+  overflow-y: auto;
+  background: var(--gradum-bg);
+}
+
+.gradum-dash-content h1 {
+  font-size: clamp(1.375rem, 3vw, 1.875rem);
+  margin: 0 0 0.25rem;
+  color: var(--gradum-heading);
+}
+
+.gradum-dash-semester-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: rgba(20, 184, 166, 0.1);
+  border: 1px solid rgba(20, 184, 166, 0.3);
+  color: var(--gradum-primary);
+  margin-bottom: 2rem;
+}
+
+/* Grid de action cards */
+.gradum-dash-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.gradum-dash-action-card {
+  background: var(--gradum-surface);
+  border: 1px solid var(--gradum-border);
+  border-radius: 0.875rem;
+  padding: 1.5rem;
+  box-shadow: var(--gradum-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gradum-dash-action-card:hover {
+  border-color: rgba(20, 184, 166, 0.4);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 12px 40px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(20, 184, 166, 0.12);
+}
+
+.gradum-dash-action-card__icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.625rem;
+  background: rgba(20, 184, 166, 0.12);
+  border: 1px solid rgba(20, 184, 166, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gradum-primary);
+  font-size: 1.1rem;
+}
+
+.gradum-dash-action-card h2 {
+  font-size: 1rem;
+  margin: 0;
+  color: var(--gradum-heading);
+}
+
+.gradum-dash-action-card p {
+  font-size: 0.875rem;
+  color: var(--gradum-muted);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.gradum-dash-action-card__count {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--gradum-primary);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(20, 184, 166, 0.1);
+  border: 1px solid rgba(20, 184, 166, 0.25);
+  display: inline-block;
+  margin-bottom: 0.25rem;
+}
+
+.gradum-dash-action-card__footer {
+  margin-top: auto;
+}
+
+/* Responsive: sidebar se oculta en mobile, topbar full-width */
+@media (max-width: 768px) {
+  .gradum-dash-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .gradum-dash-sidebar {
+    display: none;
+  }
+
+  .gradum-dash-content {
+    padding: 1.5rem 1rem;
   }
 }

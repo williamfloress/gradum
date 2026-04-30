@@ -6,8 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { toPorcentajeNumber } from './planes-evaluacion-porcentajes.util';
 import { computeDefinitivaYCompleto, PlanNotaInput } from './nota-definitiva.util';
-
-const NOTA_MINIMA_APROBACION_DEFAULT = 3;
+const NOTA_MINIMA_APROBACION_DEFAULT = 5;
 
 @Injectable()
 export class NotaDefinitivaService {

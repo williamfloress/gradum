@@ -96,16 +96,6 @@ const SortableItem: React.FC<SortableItemProps> = (props) => {
         </div>
       )}
 
-      {/* Link al plan de evaluación */}
-      {props.inscripcionId && (
-        <Link
-          to={`/inscripciones/${props.inscripcionId}/plan`}
-          style={{ fontSize: '0.75rem', color: 'var(--gradum-primary)', marginTop: '0.3rem', display: 'inline-block' }}
-          onClick={e => e.stopPropagation()}
-        >
-          Ver plan de evaluación →
-        </Link>
-      )}
     </div>
   );
 };

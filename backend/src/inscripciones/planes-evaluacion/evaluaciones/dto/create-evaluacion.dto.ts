@@ -25,13 +25,13 @@ export class CreateEvaluacionDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
-  @Max(5)
+  @Max(10)
   notaEsperada?: number;
 
   @IsOptional()
   @IsNumber()
   @Min(0)
-  @Max(5)
+  @Max(10)
   notaReal?: number;
 
   /** URLs u paths ya subidos (S6-5 puede refinar el flujo). */

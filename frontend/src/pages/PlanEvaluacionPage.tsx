@@ -9,6 +9,7 @@ import {
   type Evaluacion,
 } from '../services/planes-evaluacion.service';
 import { uploadEvaluacionFile } from '../lib/supabase';
+import { DashboardLayout } from '../components/layout/DashboardLayout';
 import './pages.css';
 import './plan-evaluacion.css';
 
@@ -127,7 +128,7 @@ function EvaluacionRow({ ev, inscripcionId, planId, userId, onUpdated }: Evaluac
           <input
             id={`ev-esperada-${ev.id}`}
             type="number"
-            min="0" max="5" step="0.1"
+            min="0" max="10" step="0.1"
             className="gradum-inline-input gradum-inline-input--num"
             placeholder="0.0"
             value={fields.notaEsperada}
@@ -139,7 +140,7 @@ function EvaluacionRow({ ev, inscripcionId, planId, userId, onUpdated }: Evaluac
           <input
             id={`ev-real-${ev.id}`}
             type="number"
-            min="0" max="5" step="0.1"
+            min="0" max="10" step="0.1"
             className="gradum-inline-input gradum-inline-input--num"
             placeholder="0.0"
             value={fields.notaReal}
@@ -197,25 +198,7 @@ function EvaluacionRow({ ev, inscripcionId, planId, userId, onUpdated }: Evaluac
       <td className="gpe-nota gpe-nota--real">{ev.notaReal ?? <span className="gpe-empty">—</span>}</td>
       {/* Columna de archivos con upload y lista de enlaces */}
       <td className="gpe-archivos-cell">
-        <div className="gradum-admin-actions">
-          <button
-            id={`ev-edit-${ev.id}`}
-            className="gradum-btn gradum-btn--secondary gradum-btn--sm"
-            onClick={() => setEditing(true)}
-          >
-            Editar
-          </button>
-          <button
-            id={`ev-del-${ev.id}`}
-            className="gradum-btn gradum-btn--danger gradum-btn--sm"
-            onClick={handleDelete}
-          >
-            Eliminar
-          </button>
-        </div>
-
-        {/* Sección de archivos: enlace a cada archivo + botón de subida */}
-        <div style={{ marginTop: '0.75rem' }}>
+        <div>
           {ev.archivos && ev.archivos.length > 0 && (
             <div className="gpe-archivos">
               {ev.archivos.map((url, i) => (
@@ -231,6 +214,25 @@ function EvaluacionRow({ ev, inscripcionId, planId, userId, onUpdated }: Evaluac
             {uploading ? 'Subiendo…' : '📎 Subir archivo'}
             <input type="file" hidden onChange={handleFileUpload} disabled={uploading} />
           </label>
+        </div>
+      </td>
+      {/* Columna de acciones */}
+      <td>
+        <div className="gradum-admin-actions">
+          <button
+            id={`ev-edit-${ev.id}`}
+            className="gradum-btn gradum-btn--secondary gradum-btn--sm"
+            onClick={() => setEditing(true)}
+          >
+            Editar
+          </button>
+          <button
+            id={`ev-del-${ev.id}`}
+            className="gradum-btn gradum-btn--danger gradum-btn--sm"
+            onClick={handleDelete}
+          >
+            Eliminar
+          </button>
         </div>
       </td>
     </tr>
@@ -463,7 +465,7 @@ function PlanCard({ plan, inscripcionId, userId, onUpdated }: PlanCardProps) {
                   <td>
                     <input
                       id={`new-ev-esperada-${plan.id}`}
-                      type="number" min="0" max="5" step="0.1"
+                      type="number" min="0" max="10" step="0.1"
                       className="gradum-inline-input gradum-inline-input--num"
                       placeholder="0.0"
                       value={newEv.notaEsperada}
@@ -473,7 +475,7 @@ function PlanCard({ plan, inscripcionId, userId, onUpdated }: PlanCardProps) {
                   <td>
                     <input
                       id={`new-ev-real-${plan.id}`}
-                      type="number" min="0" max="5" step="0.1"
+                      type="number" min="0" max="10" step="0.1"
                       className="gradum-inline-input gradum-inline-input--num"
                       placeholder="0.0"
                       value={newEv.notaReal}
@@ -600,24 +602,20 @@ export function PlanEvaluacionPage() {
   const sumaCls = sumaPct > 100 ? 'gpe-pct-bar--over' : sumaPct === 100 ? 'gpe-pct-bar--full' : '';
 
   return (
-    <div className="gradum-page gradum-dashboard">
-      {/* Cabecera: logo + breadcrumb con link funcional a Inscripciones */}
-      <header className="gradum-dash-header gradum-dash-header--wide">
-        <Link to="/" className="gradum-logo gradum-logo--link">GRADUM</Link>
-        <nav className="gradum-dash-nav">
-          <Link to="/dashboard" className="gradum-link">Dashboard</Link>
-          <span className="gradum-dash-nav__current">/</span>
-          <Link to="/inscripciones" className="gradum-link">Inscripciones</Link>
-          <span className="gradum-dash-nav__current">/ Plan de evaluación</span>
-        </nav>
-      </header>
+    <DashboardLayout>
+      <div style={{ flex: 1, padding: '1rem 0' }}>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <nav className="gradum-dash-nav" style={{ justifyContent: 'flex-start' }}>
+            <Link to="/inscripciones" className="gradum-link">Inscripciones</Link>
+            <span className="gradum-dash-nav__current">/ Plan de evaluación</span>
+          </nav>
+        </div>
 
-      <main className="gradum-dash-main gradum-dash-main--wide">
         {/* Encabezado de la inscripción */}
         {inscripcion && (
           <div className="gpe-inscripcion-header">
             <div>
-              <h1>{inscripcion.materia.nombre}</h1>
+              <h1 style={{ marginTop: 0 }}>{inscripcion.materia.nombre}</h1>
               <p className="gradum-muted-text">
                 {inscripcion.materia.codigo && <><code>{inscripcion.materia.codigo}</code> · </>}
                 {inscripcion.semestreEtiqueta}
@@ -752,7 +750,7 @@ export function PlanEvaluacionPage() {
             </div>
           )}
         </section>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

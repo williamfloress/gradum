@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { getApiUrl } from '../lib/config';
 import './pages.css';
 
@@ -146,25 +147,8 @@ export function AdminDegreesPage() {
   }
 
   return (
-    <div className="gradum-page gradum-dashboard">
-      <header className="gradum-dash-header gradum-dash-header--wide">
-        <div className="gradum-dash-header__left">
-          <Link to="/" className="gradum-logo gradum-logo--link">
-            GRADUM
-          </Link>
-          <nav className="gradum-dash-nav" aria-label="Administración">
-            <Link to="/dashboard" className="gradum-link">
-              Mi panel
-            </Link>
-            <span className="gradum-dash-nav__current">Carreras</span>
-          </nav>
-        </div>
-        <Link to="/dashboard" className="gradum-btn gradum-btn--outline gradum-btn--sm">
-          Volver al panel
-        </Link>
-      </header>
-
-      <main className="gradum-dash-main gradum-dash-main--wide">
+    <DashboardLayout>
+      <div style={{ flex: 1, padding: '1rem 0', maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
         <h1>Carreras</h1>
         <p className="gradum-lead">Administrá carreras y continuá hacia sus pensums.</p>
 
@@ -295,8 +279,8 @@ export function AdminDegreesPage() {
             </div>
           )}
         </section>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
 

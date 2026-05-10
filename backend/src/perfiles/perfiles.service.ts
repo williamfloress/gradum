@@ -240,9 +240,114 @@ export class PerfilesService {
   }
 
   /**
+   * Obtiene las inscripciones del semestre actual (o de uno dado) con
+   * resumen de planes de evaluación y progreso.
+   * Alimenta la vista «Mi Semestre» del frontend.
+   */
+  async getMiSemestre(userId: string, semestreParam?: string) {
+    const perfil = await this.prisma.perfilEstudiante.findUnique({
+      where: { usuarioId: userId },
+    });
+
+    if (!perfil) {
+      throw new NotFoundException('El usuario no tiene perfil asignado');
+    }
+
+    const semestre = semestreParam || perfil.semestreActual;
+
+    const inscripciones = await this.prisma.inscripcionSemestre.findMany({
+      where: {
+        usuarioId: userId,
+        semestreEtiqueta: semestre,
+      },
+      include: {
+        materia: true,
+        planesEvaluacion: {
+          include: { evaluaciones: true },
+          orderBy: { orden: 'asc' },
+        },
+      },
+      orderBy: { materia: { nombre: 'asc' } },
+    });
+
+    // Calcular progreso y nota parcial por inscripción
+    const result = inscripciones.map((insc) => {
+      let totalPorcentajePlanes = 0;
+      let porcentajeEvaluado = 0;
+      let notaParcial = 0;
+      let totalEvaluaciones = 0;
+      let evaluacionesCalificadas = 0;
+      let proximaFecha: Date | null = null;
+
+      for (const plan of insc.planesEvaluacion) {
+        const porcPlan = Number(plan.porcentaje);
+        totalPorcentajePlanes += porcPlan;
+
+        for (const ev of plan.evaluaciones) {
+          totalEvaluaciones++;
+          if (ev.notaReal != null) {
+            evaluacionesCalificadas++;
+            // Peso de esta evaluación = porcentaje del plan / cant. evaluaciones del plan
+            const pesoEv = porcPlan / plan.evaluaciones.length;
+            notaParcial += (Number(ev.notaReal) * pesoEv) / 100;
+            porcentajeEvaluado += pesoEv;
+          }
+
+          // Próxima fecha límite
+          if (ev.fechaLimite && ev.notaReal == null) {
+            const fecha = new Date(ev.fechaLimite);
+            if (!proximaFecha || fecha < proximaFecha) {
+              proximaFecha = fecha;
+            }
+          }
+        }
+      }
+
+      return {
+        id: insc.id,
+        materia: {
+          id: insc.materia.id,
+          nombre: insc.materia.nombre,
+          codigo: insc.materia.codigo,
+          creditos: insc.materia.creditos,
+          semestreNumero: insc.materia.semestreNumero,
+        },
+        estado: insc.estado,
+        notaDefinitiva: insc.notaDefinitiva
+          ? Number(insc.notaDefinitiva)
+          : null,
+        totalPorcentajePlanes: Number(totalPorcentajePlanes.toFixed(2)),
+        porcentajeEvaluado: Number(porcentajeEvaluado.toFixed(2)),
+        notaParcial: Number(notaParcial.toFixed(2)),
+        totalEvaluaciones,
+        evaluacionesCalificadas,
+        proximaFecha,
+        planes: insc.planesEvaluacion.map((plan) => ({
+          id: plan.id,
+          nombre: plan.nombre,
+          porcentaje: Number(plan.porcentaje),
+          evaluaciones: plan.evaluaciones.length,
+          evaluacionesCalificadas: plan.evaluaciones.filter(
+            (e) => e.notaReal != null,
+          ).length,
+        })),
+      };
+    });
+
+    return {
+      semestre,
+      totalMaterias: result.length,
+      materiasAprobadas: result.filter((r) => r.estado === 'aprobada').length,
+      materiasEnCurso: result.filter((r) => r.estado === 'en_curso').length,
+      inscripciones: result,
+    };
+  }
+
+  /**
    * Obtiene todas las evaluaciones del estudiante que tienen fecha límite,
    * estructuradas para alimentar el calendario del frontend.
    */
+
   async getCalendario(userId: string) {
     const inscripciones = await this.prisma.inscripcionSemestre.findMany({
       where: { usuarioId: userId },

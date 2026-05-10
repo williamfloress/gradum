@@ -106,6 +106,21 @@ export function Sidebar({ isOpen }: { isOpen?: boolean }) {
             Las Materias
           </Link>
           <Link
+            to="/semestre"
+            className={`gradum-dash-sidebar__item${isCurrent('/semestre') ? ' gradum-dash-sidebar__item--active' : ''}`}
+            id="sidebar-semestre"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              className="gradum-dash-sidebar__icon" aria-hidden="true">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+            Mi Semestre
+          </Link>
+          <Link
             to="/planes-evaluacion"
             className={`gradum-dash-sidebar__item${isCurrent('/planes-evaluacion') || location.pathname.includes('/plan') ? ' gradum-dash-sidebar__item--active' : ''}`}
             id="sidebar-planes-evaluacion"

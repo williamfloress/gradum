@@ -20,6 +20,7 @@ import { InscripcionesPage } from './pages/InscripcionesPage';
 import { PlanesEvaluacionIndexPage } from './pages/PlanesEvaluacionIndexPage';
 import { PensumTreePage } from './pages/PensumTreePage';
 import { CalendarPage } from './pages/CalendarPage';
+import { SemestrePage } from './pages/SemestrePage';
 import './App.css';
 
 function App() {
@@ -73,6 +74,16 @@ function App() {
               <ProtectedRoute>
                 <ApprovedAccountGate>
                   <InscripcionesPage />
+                </ApprovedAccountGate>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/semestre"
+            element={
+              <ProtectedRoute>
+                <ApprovedAccountGate>
+                  <SemestrePage />
                 </ApprovedAccountGate>
               </ProtectedRoute>
             }

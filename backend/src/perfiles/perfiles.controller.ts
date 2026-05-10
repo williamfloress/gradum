@@ -6,6 +6,7 @@ import {
   HttpStatus,
   NotFoundException,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -54,6 +55,17 @@ export class PerfilesController {
   @Get('mi-pensum')
   getMiPensum(@Req() req: any) {
     return this.perfilesService.getMiPensum(req.user.userId);
+  }
+
+  /**
+   * GET /perfiles/mi-semestre
+   * Retorna las inscripciones del semestre actual (o del semestre indicado
+   * por query param) con detalle de planes de evaluación y progreso.
+   * Alimenta la vista «Mi Semestre» del frontend.
+   */
+  @Get('mi-semestre')
+  getMiSemestre(@Req() req: any, @Query('semestre') semestre?: string) {
+    return this.perfilesService.getMiSemestre(req.user.userId, semestre);
   }
 
   /**

@@ -18,6 +18,8 @@ import { PlanEvaluacionPage } from './pages/PlanEvaluacionPage';
 // Página de inscripciones del estudiante (Sprint 5); registrada aquí para que el breadcrumb de PlanEvaluacionPage funcione
 import { InscripcionesPage } from './pages/InscripcionesPage';
 import { PlanesEvaluacionIndexPage } from './pages/PlanesEvaluacionIndexPage';
+import { PensumTreePage } from './pages/PensumTreePage';
+import { CalendarPage } from './pages/CalendarPage';
 import './App.css';
 
 function App() {
@@ -91,6 +93,26 @@ function App() {
               <ProtectedRoute>
                 <ApprovedAccountGate>
                   <PlanEvaluacionPage />
+                </ApprovedAccountGate>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/pensum"
+            element={
+              <ProtectedRoute>
+                <ApprovedAccountGate>
+                  <PensumTreePage />
+                </ApprovedAccountGate>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/calendario"
+            element={
+              <ProtectedRoute>
+                <ApprovedAccountGate>
+                  <CalendarPage />
                 </ApprovedAccountGate>
               </ProtectedRoute>
             }

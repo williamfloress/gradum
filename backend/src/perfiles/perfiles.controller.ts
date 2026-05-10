@@ -45,4 +45,24 @@ export class PerfilesController {
     }
     return perfil;
   }
+
+  /**
+   * GET /perfiles/mi-pensum
+   * Retorna el pensum completo del estudiante estructurado por semestres,
+   * incluyendo el estado de cada materia según sus inscripciones.
+   */
+  @Get('mi-pensum')
+  getMiPensum(@Req() req: any) {
+    return this.perfilesService.getMiPensum(req.user.userId);
+  }
+
+  /**
+   * GET /perfiles/calendario
+   * Retorna todas las evaluaciones con fecha límite del estudiante,
+   * listas para renderizar en el calendario del frontend.
+   */
+  @Get('calendario')
+  getCalendario(@Req() req: any) {
+    return this.perfilesService.getCalendario(req.user.userId);
+  }
 }

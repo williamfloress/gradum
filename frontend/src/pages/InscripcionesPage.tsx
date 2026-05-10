@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+
 import { useAuth } from '../auth/AuthContext';
 import { SemesterAlert } from '../components/SemesterAlert';
 import { SemesterEnrollmentDnd } from '../components/SemesterEnrollmentDnd';

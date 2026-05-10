@@ -173,4 +173,113 @@ export class PerfilesService {
       semestreActual: perfil.semestreActual,
     };
   }
+
+  /**
+   * Obtiene el pensum completo del estudiante, con el estado de cada materia
+   * basado en sus inscripciones actuales o históricas.
+   */
+  async getMiPensum(userId: string) {
+    const perfil = await this.prisma.perfilEstudiante.findUnique({
+      where: { usuarioId: userId },
+      include: { pensum: true },
+    });
+
+    if (!perfil) {
+      throw new NotFoundException('El usuario no tiene perfil asignado');
+    }
+
+    const materias = await this.prisma.materia.findMany({
+      where: { pensumId: perfil.pensumId },
+      include: {
+        prerrequisitosDe: {
+          include: { materiaPrerrequisito: true },
+        },
+      },
+      orderBy: [{ semestreNumero: 'asc' }, { orden: 'asc' }, { nombre: 'asc' }],
+    });
+
+    const inscripciones = await this.prisma.inscripcionSemestre.findMany({
+      where: { usuarioId: userId },
+    });
+
+    const semestresMap = new Map<number, any>();
+
+    for (const materia of materias) {
+      let inscripcion = inscripciones.find((i) => i.materiaId === materia.id);
+      
+      const materiaFormat = {
+        id: materia.id,
+        nombre: materia.nombre,
+        codigo: materia.codigo,
+        creditos: materia.creditos,
+        estado: inscripcion ? inscripcion.estado : 'pendiente',
+        notaDefinitiva: inscripcion?.notaDefinitiva ? Number(inscripcion.notaDefinitiva) : null,
+        prerrequisitos: materia.prerrequisitosDe.map((p) => ({
+          id: p.materiaPrerrequisito.id,
+          nombre: p.materiaPrerrequisito.nombre,
+        })),
+      };
+
+      const semNum = materia.semestreNumero;
+      if (!semestresMap.has(semNum)) {
+        semestresMap.set(semNum, {
+          numero: semNum,
+          materias: [],
+        });
+      }
+      semestresMap.get(semNum).materias.push(materiaFormat);
+    }
+
+    return {
+      pensum: {
+        id: perfil.pensum.id,
+        nombre: perfil.pensum.nombre,
+      },
+      semestres: Array.from(semestresMap.values()).sort((a, b) => a.numero - b.numero),
+    };
+  }
+
+  /**
+   * Obtiene todas las evaluaciones del estudiante que tienen fecha límite,
+   * estructuradas para alimentar el calendario del frontend.
+   */
+  async getCalendario(userId: string) {
+    const inscripciones = await this.prisma.inscripcionSemestre.findMany({
+      where: { usuarioId: userId },
+      include: {
+        materia: true,
+        planesEvaluacion: {
+          include: {
+            evaluaciones: {
+              where: { fechaLimite: { not: null } },
+            },
+          },
+        },
+      },
+    });
+
+    const eventos: any[] = [];
+
+    for (const insc of inscripciones) {
+      for (const plan of insc.planesEvaluacion) {
+        for (const ev of plan.evaluaciones) {
+          eventos.push({
+            id: ev.id,
+            titulo: `${insc.materia.nombre} — ${plan.nombre}`,
+            fechaLimite: ev.fechaLimite,
+            observacion: ev.observacion,
+            notaEsperada: ev.notaEsperada ? Number(ev.notaEsperada) : null,
+            notaReal: ev.notaReal ? Number(ev.notaReal) : null,
+            planId: plan.id,
+            inscripcionId: insc.id,
+            materiaNombre: insc.materia.nombre,
+            planNombre: plan.nombre,
+            porcentajePlan: Number(plan.porcentaje),
+          });
+        }
+      }
+    }
+
+    return eventos;
+  }
 }

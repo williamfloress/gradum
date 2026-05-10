@@ -126,7 +126,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const logout = useCallback(() => {
+    // 1. Borramos el token de la aplicación
     localStorage.removeItem(TOKEN_KEY);
+    
+    // 2. Limpiamos cualquier token huérfano de Supabase (empiezan por sb- y terminan en auth-token)
+    // Esto evita el problema de que el navegador retenga la sesión de una cuenta anterior
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('sb-') && key.includes('-auth-token')) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key));
+
     setToken(null);
     setUser(null);
   }, []);

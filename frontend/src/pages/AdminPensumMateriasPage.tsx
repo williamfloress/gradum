@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { getApiUrl } from '../lib/config';
 import './pages.css';
 
@@ -305,45 +306,21 @@ export function AdminPensumMateriasPage() {
   }
 
   return (
-    <div className="gradum-page gradum-dashboard">
-      <header className="gradum-dash-header gradum-dash-header--wide">
-        <div className="gradum-dash-header__left">
-          <Link to="/" className="gradum-logo gradum-logo--link">
-            GRADUM
-          </Link>
-          <nav className="gradum-dash-nav" aria-label="Administración">
-            <Link to="/dashboard" className="gradum-link">
-              Mi panel
-            </Link>
-            <Link to="/admin/carreras" className="gradum-link">
-              Carreras
-            </Link>
-            {pensum?.degreeId ? (
-              <Link to={`/admin/carreras/${pensum.degreeId}/pensums`} className="gradum-link">
-                Pensums
-              </Link>
-            ) : (
-              <span className="gradum-dash-nav__current">Pensums</span>
-            )}
-            <span className="gradum-dash-nav__current">Materias</span>
-          </nav>
-        </div>
-        <div className="gradum-admin-actions">
+    <DashboardLayout>
+      <div style={{ flex: 1, padding: '1rem 0', maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
+        <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '0.75rem' }}>
           {pensum?.degreeId && (
             <Link
               to={`/admin/carreras/${pensum.degreeId}/pensums`}
               className="gradum-btn gradum-btn--outline gradum-btn--sm"
             >
-              Volver a pensums
+              ← Volver a pensums
             </Link>
           )}
           <Link to="/admin/carreras" className="gradum-btn gradum-btn--outline gradum-btn--sm">
             Volver a carreras
           </Link>
         </div>
-      </header>
-
-      <main className="gradum-dash-main gradum-dash-main--wide">
         <h1>Materias</h1>
         <p className="gradum-lead">
           Gestioná materias del pensum{pensum?.name ? ` “${pensum.name}”` : ''} y sus prerrequisitos.
@@ -626,8 +603,8 @@ export function AdminPensumMateriasPage() {
             </div>
           )}
         </section>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
 

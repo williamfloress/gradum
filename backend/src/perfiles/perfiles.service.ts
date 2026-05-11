@@ -91,7 +91,11 @@ export class PerfilesService {
       let inscripcionesCreadas = 0;
       if (dto.tipoIngreso === 'primer_semestre') {
         const materiasSem1 = await tx.materia.findMany({
-          where: { pensumId: resolvedPensumId, semestreNumero: 1 },
+          where: { 
+            pensumId: resolvedPensumId, 
+            semestreNumero: 1,
+            nombre: { notContains: 'Extra-Académica', mode: 'insensitive' }
+          },
           orderBy: { orden: 'asc' },
         });
 
